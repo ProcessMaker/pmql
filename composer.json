@@ -1,0 +1,37 @@
+{
+    "name": "processmaker/pmql",
+    "friendly_name": "ProcessMaker Query Language Package for Laravel",
+    "version": "1.0.0",
+    "description": "A SQL like query language that supports SQL and non-SQL targets when querying",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Taylor Dondich",
+            "email": "taylor@processmaker.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ProcessMaker\\Query\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ProcessMaker\\Query\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ProcessMaker\\Query\\Providers\\QueryServiceProvider"
+            ]
+        }
+    },
+    "require": {
+	"laravel/framework": "5.7.*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^3.5",
+        "phpunit/phpunit": "^7.0"
+    }
+}

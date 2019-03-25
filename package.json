@@ -1,0 +1,17 @@
+{
+  "name": "@processmaker/pmql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tools/build.js",
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "pegjs": "^0.10.0",
+    "phpegjs": "^1.0.0-beta7"
+  },
+  "scripts": {
+    "build": "node ./tools/build.js -i grammar/pmql.peg -o ./src/Parser.php -n ProcessMaker\\Query -c Parser"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
