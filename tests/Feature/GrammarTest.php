@@ -17,6 +17,13 @@ class GrammarTest extends TestCase
         $this->assertEquals($query->parse('1+1'), 2);
     }
 
+    public function testAdvancedGrammar()
+    {
+        $query = app()->make(Query::class);
+        $this->assertEquals($query->parse('2*(1+5)'), 12);
+    }
+
+
     /**
      * Ensure we throw a grammar error. 
      */
