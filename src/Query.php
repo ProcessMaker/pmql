@@ -13,6 +13,9 @@ class Query extends Parser
         $this->manager = $manager;
     }
 
+    /**
+     * Pass in optional options as a secondary parameter
+     */
     public function parse($input)
     {
         // Our overriden parse, could be used to do some setup/teardown

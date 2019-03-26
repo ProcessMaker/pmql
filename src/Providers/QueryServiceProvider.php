@@ -2,15 +2,15 @@
 namespace ProcessMaker\Query\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use ProcessMaker\Query\Manager\QueryManager;
+use ProcessMaker\Query\Facades\QueryManager;
 use ProcessMaker\Query\Query;
 
 class QueryServiceProvider extends ServiceProvider
 {
 
-    protected $singletons = [
+    public $singletons = [
         QueryManager::class => QueryManager::class
-    ]
+    ];
 
     public function boot()
     {

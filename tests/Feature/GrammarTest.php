@@ -3,7 +3,7 @@ namespace ProcessMaker\Query\Tests\Feature;
 
 use ProcessMaker\Query\Query;
 use ProcessMaker\Query\SyntaxError;
-use Orchestra\Testbench\TestCase;
+use ProcessMaker\Query\Tests\TestCase;
 
 
 class GrammarTest extends TestCase
@@ -31,6 +31,19 @@ class GrammarTest extends TestCase
     {
         $this->expectException(SyntaxError::class);
         $query = app()->make(Query::class);
-        dd($query->parse('invalid'));
    }
+
+    /** @test */
+    public function it_runs_the_migrations()
+    {
+        $record = \DB::table('test_records')->where('id', '=', 1)->first();
+        $this->assertEquals(['test' => 'value'], $record->data);
+        $columns = \Schema::getColumnListing('test_records');
+        $this->assertEquals([
+            'id',
+            'created_at',
+            'updated_at',
+            'data',
+        ], $columns);
+    }
 }
