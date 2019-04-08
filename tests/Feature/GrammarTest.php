@@ -9,31 +9,37 @@ use ProcessMaker\Query\Tests\TestCase;
 class GrammarTest extends TestCase
 {
     /**
-     * Test to see if our parser supports the simple arithmetic of 1+1
+     * Test to see if grammar supports "name = value"
      */
     public function testSimpleGrammar()
     {
         $query = app()->make(Query::class);
-        $this->assertEquals($query->parse('1+1'), 2);
+        dd($query->parse('requester="Mila" and (data.credit.score >= 750 OR data.credit.score < 500)'));
+        //$this->assertEquals($query->parse('name'), 2);
     }
 
+    /*
     public function testAdvancedGrammar()
     {
         $query = app()->make(Query::class);
         $this->assertEquals($query->parse('2*(1+5)'), 12);
     }
+    */
 
 
     /**
      * Ensure we throw a grammar error. 
      */
+    /*
     public function testGrammarError()
     {
         $this->expectException(SyntaxError::class);
         $query = app()->make(Query::class);
    }
+   */
 
     /** @test */
+    /*
     public function it_runs_the_migrations()
     {
         $record = \DB::table('test_records')->where('id', '=', 1)->first();
@@ -46,4 +52,5 @@ class GrammarTest extends TestCase
             'data',
         ], $columns);
     }
+    */
 }

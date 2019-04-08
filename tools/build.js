@@ -8,7 +8,7 @@ if(!argv.i || !argv.o || !argv.n || !argv.c) {
     console.log(`
 Usage: build.js -i <input grammar file> -o <output source file> -n <namespace> -c <classname>
 
-Example: node ./buildjs -i query.peg -o src/Parser.php -n ProcessMaker\\Query -c Parser
+Example: node ./buildjs -i query.peg -o src/Parser.php -n 'ProcessMaker\\Query' -c Parser
     `);
     process.exit(-1);
 }

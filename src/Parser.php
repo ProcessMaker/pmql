@@ -336,23 +336,27 @@ class Parser {
     private $peg_c106;
     private $peg_c107;
 
-    private function peg_f0($ex) { return flatten(ex, true); }
-    private function peg_f1($e) { return flatten(e[1]); }
+    private function peg_f0($ex) { return flatten($ex, true); }
+    private function peg_f1($e) { return flatten($e[1]); }
     private function peg_f2($j) { return [ 'json_data_name' => $j ]; }
-    private function peg_f3($x) { return [ 'literal' => x ]; }
-    private function peg_f4($c) { return [ 'column' => c ]; }
-    private function peg_f5($v) { return v[1]; }
-    private function peg_f6($el) { return flatstr(el); }
-    private function peg_f7($el) { return flatten(el); }
-    private function peg_f8($digits) { $x = flatstr($digits);
-        if (strpos(x, '.') >= 0) {
-          return floatval(x);
+    private function peg_f3($x) { return [ 'literal' => $x ]; }
+    private function peg_f4($c) { return [ 'column' => $c ]; }
+    private function peg_f5($v) { return $v[1]; }
+    private function peg_f6($dn) { return flatstr($dn, true); }
+    private function peg_f7($el) { return flatstr($el, true); }
+    private function peg_f8($ae) { return flatstr($ae); }
+    private function peg_f9($digits) { $x = flatstr($digits);
+        // If there's a decimal point, then absolutely return float val
+        if (strpos($x, '.') !== false) {
+          return floatval($x);
         }
-        return intval(x);
+        // Otherwise, return the integer value
+        return intval($x);
       }
-    private function peg_f9($str) { return implode("", flatten(str)); }
-    private function peg_f10($x) { return x[1]; }
-    private function peg_f11($str) { return implode('', $str); }
+    private function peg_f10($str) { return implode("", flatten($str)); }
+    private function peg_f11($x) { return $x[1]; }
+    private function peg_f12($x) { return strtoupper($x[1]); }
+    private function peg_f13($str) { return implode('', $str); }
 
     private function peg_parsestart() {
 
@@ -1068,35 +1072,40 @@ class Parser {
     private function peg_parsejson_data_name() {
 
       $s0 = $this->peg_currPos;
+      $s1 = $this->peg_currPos;
       if ($this->input_substr($this->peg_currPos, 4) === $this->peg_c0) {
-        $s1 = $this->peg_c0;
+        $s2 = $this->peg_c0;
         $this->peg_currPos += 4;
       } else {
-        $s1 = $this->peg_FAILED;
+        $s2 = $this->peg_FAILED;
         if ($this->peg_silentFails === 0) {
             $this->peg_fail($this->peg_c1);
         }
       }
-      if ($s1 !== $this->peg_FAILED) {
-        $s2 = $this->peg_parsedot();
-        if ($s2 !== $this->peg_FAILED) {
-          $s3 = $this->peg_parsejson_element();
-          if ($s3 !== $this->peg_FAILED) {
-            $this->peg_reportedPos = $s0;
-            $s1 = $this->peg_f6($s3);
-            $s0 = $s1;
+      if ($s2 !== $this->peg_FAILED) {
+        $s3 = $this->peg_parsedot();
+        if ($s3 !== $this->peg_FAILED) {
+          $s4 = $this->peg_parsejson_element();
+          if ($s4 !== $this->peg_FAILED) {
+            $s2 = array($s2, $s3, $s4);
+            $s1 = $s2;
           } else {
-            $this->peg_currPos = $s0;
-            $s0 = $this->peg_FAILED;
+            $this->peg_currPos = $s1;
+            $s1 = $this->peg_FAILED;
           }
         } else {
-          $this->peg_currPos = $s0;
-          $s0 = $this->peg_FAILED;
+          $this->peg_currPos = $s1;
+          $s1 = $this->peg_FAILED;
         }
       } else {
-        $this->peg_currPos = $s0;
-        $s0 = $this->peg_FAILED;
+        $this->peg_currPos = $s1;
+        $s1 = $this->peg_FAILED;
       }
+      if ($s1 !== $this->peg_FAILED) {
+        $this->peg_reportedPos = $s0;
+        $s1 = $this->peg_f6($s1);
+      }
+      $s0 = $s1;
 
       return $s0;
     }
@@ -1167,41 +1176,47 @@ class Parser {
     private function peg_parsejson_array_element() {
 
       $s0 = $this->peg_currPos;
-      $s1 = $this->peg_parsename();
-      if ($s1 !== $this->peg_FAILED) {
-        $s2 = $this->peg_parselbrack();
-        if ($s2 !== $this->peg_FAILED) {
-          $s3 = array();
-          $s4 = $this->peg_parsedigit();
-          if ($s4 !== $this->peg_FAILED) {
-            while ($s4 !== $this->peg_FAILED) {
-              $s3[] = $s4;
-              $s4 = $this->peg_parsedigit();
+      $s1 = $this->peg_currPos;
+      $s2 = $this->peg_parsename();
+      if ($s2 !== $this->peg_FAILED) {
+        $s3 = $this->peg_parselbrack();
+        if ($s3 !== $this->peg_FAILED) {
+          $s4 = array();
+          $s5 = $this->peg_parsedigit();
+          if ($s5 !== $this->peg_FAILED) {
+            while ($s5 !== $this->peg_FAILED) {
+              $s4[] = $s5;
+              $s5 = $this->peg_parsedigit();
             }
           } else {
-            $s3 = $this->peg_FAILED;
+            $s4 = $this->peg_FAILED;
           }
-          if ($s3 !== $this->peg_FAILED) {
-            $s4 = $this->peg_parserbrack();
-            if ($s4 !== $this->peg_FAILED) {
-              $s1 = array($s1, $s2, $s3, $s4);
-              $s0 = $s1;
+          if ($s4 !== $this->peg_FAILED) {
+            $s5 = $this->peg_parserbrack();
+            if ($s5 !== $this->peg_FAILED) {
+              $s2 = array($s2, $s3, $s4, $s5);
+              $s1 = $s2;
             } else {
-              $this->peg_currPos = $s0;
-              $s0 = $this->peg_FAILED;
+              $this->peg_currPos = $s1;
+              $s1 = $this->peg_FAILED;
             }
           } else {
-            $this->peg_currPos = $s0;
-            $s0 = $this->peg_FAILED;
+            $this->peg_currPos = $s1;
+            $s1 = $this->peg_FAILED;
           }
         } else {
-          $this->peg_currPos = $s0;
-          $s0 = $this->peg_FAILED;
+          $this->peg_currPos = $s1;
+          $s1 = $this->peg_FAILED;
         }
       } else {
-        $this->peg_currPos = $s0;
-        $s0 = $this->peg_FAILED;
+        $this->peg_currPos = $s1;
+        $s1 = $this->peg_FAILED;
       }
+      if ($s1 !== $this->peg_FAILED) {
+        $this->peg_reportedPos = $s0;
+        $s1 = $this->peg_f8($s1);
+      }
+      $s0 = $s1;
 
       return $s0;
     }
@@ -1361,7 +1376,7 @@ class Parser {
       }
       if ($s1 !== $this->peg_FAILED) {
         $this->peg_reportedPos = $s0;
-        $s1 = $this->peg_f8($s1);
+        $s1 = $this->peg_f9($s1);
       }
       $s0 = $s1;
 
@@ -1587,7 +1602,7 @@ class Parser {
       }
       if ($s1 !== $this->peg_FAILED) {
         $this->peg_reportedPos = $s0;
-        $s1 = $this->peg_f9($s1);
+        $s1 = $this->peg_f10($s1);
       }
       $s0 = $s1;
 
@@ -1759,7 +1774,7 @@ class Parser {
       }
       if ($s1 !== $this->peg_FAILED) {
         $this->peg_reportedPos = $s0;
-        $s1 = $this->peg_f10($s1);
+        $s1 = $this->peg_f11($s1);
       }
       $s0 = $s1;
 
@@ -2080,7 +2095,7 @@ class Parser {
       }
       if ($s1 !== $this->peg_FAILED) {
         $this->peg_reportedPos = $s0;
-        $s1 = $this->peg_f10($s1);
+        $s1 = $this->peg_f12($s1);
       }
       $s0 = $s1;
 
@@ -2148,7 +2163,7 @@ class Parser {
       }
       if ($s1 !== $this->peg_FAILED) {
         $this->peg_reportedPos = $s0;
-        $s1 = $this->peg_f11($s1);
+        $s1 = $this->peg_f13($s1);
       }
       $s0 = $s1;
 
@@ -2825,7 +2840,6 @@ class Parser {
     /* BEGIN initializer code */
 
       // Header/utility functions for sql.pegjs grammar match bodies.
-      //
       function append($arr, $x) {
         $arr[] = $x;
         return $arr;
@@ -2838,32 +2852,43 @@ class Parser {
       }
 
 
-      function flatten($x, $rejectSpace, $acc = []) {
+      function flatten($x, $rejectSpace = false, $acc = []) {
+        // We're going to check for various types of $x and handle them differently
+        // Null?
         if ($x == null) {
           if (!$rejectSpace) {
+            // We want to keep the whitespace/null, so append x to acc
             return append($acc, $x);
           }
           return $acc;
         }
-        if (isAssoc($x)) { 
+        // Associative array?
+        if (is_array($x) && isAssoc($x)) { 
           return append($acc, $x);
         }
-        if (rejectSpace &&
-          ((strlen($x) == 0) ||
-           ( is_string(x) && preg_match('/^\s*$/', $x)))) {
-          return acc;
+        // Is it an empty array, or is a string with nothing but whitespace and we're rejecting?
+        if ($rejectSpace && ( 
+            ( is_string($x) && preg_match('/^\s*$/', $x) ) || (is_array($x) && count($x) == 0)
+          )) {
+          return $acc;
         }
-        if (is_string(x)) {
-          return append(acc, x);
+        // Is it a string? If so, just append
+        if (is_string($x)) {
+          return append($acc, $x);
         }
-        // Handle array
+        // Is it a numeric array? Let's just flatten
         for ($i = 0; $i < count($x); $i++) {
-          flatten($x[$i], $rejectSpace, $acc);
+          $acc = flatten($x[$i], $rejectSpace, $acc);
         }
         return $acc;
       }
 
-      function flatstr($x, $rejectSpace, $joinChar = '') {
+      /**
+      * Flattens a parsed array into a single string value
+      * @param $x array The parsed array from a rule
+      * @param $joinChar An optional character to join each element
+      */
+      function flatstr($x, $rejectSpace = false, $joinChar = '') {
         return implode($joinChar, flatten($x, $rejectSpace, []));
       }
 

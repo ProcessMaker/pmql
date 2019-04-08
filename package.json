@@ -9,7 +9,7 @@
     "phpegjs": "^1.0.0-beta7"
   },
   "scripts": {
-    "build": "node ./tools/build.js -i grammar/pmql.pegjs -o ./src/Parser.php -n ProcessMaker\\Query -c Parser"
+    "build": "node ./tools/build.js -i grammar/pmql.pegjs -o ./src/Parser.php -n ProcessMaker\\\\Query -c Parser"
   },
   "devDependencies": {},
   "author": "",

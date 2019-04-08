@@ -15,7 +15,6 @@
 
 {
   // Header/utility functions for sql.pegjs grammar match bodies.
-  //
   function append($arr, $x) {
     $arr[] = $x;
     return $arr;
@@ -28,38 +27,49 @@
   }
 
 
-  function flatten($x, $rejectSpace, $acc = []) {
+  function flatten($x, $rejectSpace = false, $acc = []) {
+    // We're going to check for various types of $x and handle them differently
+    // Null?
     if ($x == null) {
       if (!$rejectSpace) {
+        // We want to keep the whitespace/null, so append x to acc
         return append($acc, $x);
       }
       return $acc;
     }
-    if (isAssoc($x)) { 
+    // Associative array?
+    if (is_array($x) && isAssoc($x)) { 
       return append($acc, $x);
     }
-    if (rejectSpace &&
-      ((strlen($x) == 0) ||
-       ( is_string(x) && preg_match('/^\s*$/', $x)))) {
-      return acc;
+    // Is it an empty array, or is a string with nothing but whitespace and we're rejecting?
+    if ($rejectSpace && ( 
+        ( is_string($x) && preg_match('/^\s*$/', $x) ) || (is_array($x) && count($x) == 0)
+      )) {
+      return $acc;
     }
-    if (is_string(x)) {
-      return append(acc, x);
+    // Is it a string? If so, just append
+    if (is_string($x)) {
+      return append($acc, $x);
     }
-    // Handle array
+    // Is it a numeric array? Let's just flatten
     for ($i = 0; $i < count($x); $i++) {
-      flatten($x[$i], $rejectSpace, $acc);
+      $acc = flatten($x[$i], $rejectSpace, $acc);
     }
     return $acc;
   }
 
-  function flatstr($x, $rejectSpace, $joinChar = '') {
+  /**
+  * Flattens a parsed array into a single string value
+  * @param $x array The parsed array from a rule
+  * @param $joinChar An optional character to join each element
+  */
+  function flatstr($x, $rejectSpace = false, $joinChar = '') {
     return implode($joinChar, flatten($x, $rejectSpace, []));
   }
 
 }
 
-start = ex:expr { return flatten(ex, true); }
+start = ex:expr { return flatten($ex, true); }
 
 expr =
   e: ( whitespace
@@ -69,7 +79,7 @@ expr =
        / ( value IS NOT ? expr )
        / ( value NOT ? BETWEEN expr AND expr )
        / value ) )
-  { return flatten(e[1]); }
+  { return flatten($e[1]); }
 
 type_name =
   ( name )+
@@ -84,15 +94,15 @@ value =
          ( ( j: json_data_name
            { return [ 'json_data_name' => $j ]; } )
        / ( x: literal_value
-           { return [ 'literal' => x ]; } )
+           { return [ 'literal' => $x ]; } )
        / ( c: column_name
-           { return [ 'column' => c ]; } )
+           { return [ 'column' => $c ]; } )
 
        / ( unary_operator expr )
        / call_function
        / ( whitespace lparen expr whitespace rparen )
        / ( CAST lparen expr AS type_name rparen ) ) )
-  { return v[1]; }
+  { return $v[1]; }
 
 
 call_function =
@@ -102,11 +112,11 @@ call_function =
                / whitespace star )?
     whitespace rparen )
 
-json_data_name = "data" dot el:json_element { return flatstr(el); }
+json_data_name = dn:("data" dot json_element) { return flatstr($dn, true); }
 
-json_element =  el:((json_array_element / name) (dot json_element)*) { return flatten(el); }
+json_element =  el:((json_array_element / name) (dot json_element)*) { return flatstr($el, true); }
 
-json_array_element = name lbrack digit+ rbrack
+json_array_element = ae:(name lbrack digit+ rbrack) { return flatstr($ae); }
 
 literal_value =
   ( numeric_literal / string_literal 
@@ -117,10 +127,12 @@ numeric_literal =
            / ( decimal_point ( digit )+ ) )
            ( E ( plus / minus )? ( digit )+ )? )
   { $x = flatstr($digits);
-    if (strpos(x, '.') >= 0) {
-      return floatval(x);
+    // If there's a decimal point, then absolutely return float val
+    if (strpos($x, '.') !== false) {
+      return floatval($x);
     }
-    return intval(x);
+    // Otherwise, return the integer value
+    return intval($x);
   }
 
 /** Helper definitions **/
@@ -134,7 +146,7 @@ lbrack = '['
 rbrack = ']'
 star = '*'
 newline = '\n'
-string_literal = str:('"' (escape_char / [^"])* '"') { return implode("", flatten(str)); }
+string_literal = str:('"' (escape_char / [^"])* '"') { return implode("", flatten($str)); }
 escape_char = '\\' .
 nil = ''
 
@@ -146,7 +158,7 @@ whitespace1 =
 unary_operator =
   x: ( whitespace
        ( '-' / '+' / '~' / 'NOT'i) )
-  { return x[1]; }
+  { return $x[1]; }
 
 binary_operator =
   x: ( whitespace
@@ -160,7 +172,7 @@ binary_operator =
         / 'IS'i / 'IS NOT'i / 'IN'i / 'LIKE'i / 'GLOB'i / 'MATCH'i / 'REGEXP'i
         / 'AND'i
         / 'OR'i) )
-  { return x[1]; }
+  { return strtoupper($x[1]); }
 
 digit = [0-9]
 decimal_point = dot
