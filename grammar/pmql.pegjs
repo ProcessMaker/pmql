@@ -14,72 +14,14 @@
 */
 
 {
-  // Header/utility functions for sql.pegjs grammar match bodies.
-  function append($arr, $x) {
-    $arr[] = $x;
-    return $arr;
-  }
-
-  function isAssoc(array $arr)
-  {
-      if (array() === $arr) return false;
-      return array_keys($arr) !== range(0, count($arr) - 1);
-  }
-
-
-  function flatten($x, $rejectSpace = false, $acc = []) {
-    // We're going to check for various types of $x and handle them differently
-    // Null?
-    if ($x == null) {
-      if (!$rejectSpace) {
-        // We want to keep the whitespace/null, so append x to acc
-        return append($acc, $x);
-      }
-      return $acc;
-    }
-    // Associative array?
-    if (is_array($x) && isAssoc($x)) { 
-      return append($acc, $x);
-    }
-    // Is it an empty array, or is a string with nothing but whitespace and we're rejecting?
-    if ($rejectSpace && ( 
-        ( is_string($x) && preg_match('/^\s*$/', $x) ) || (is_array($x) && count($x) == 0)
-      )) {
-      return $acc;
-    }
-    // Is it a string? If so, just append
-    if (is_string($x)) {
-      return append($acc, $x);
-    }
-    // Is it a numeric array? Let's just flatten
-    for ($i = 0; $i < count($x); $i++) {
-      $acc = flatten($x[$i], $rejectSpace, $acc);
-    }
-    return $acc;
-  }
-
-  /**
-  * Flattens a parsed array into a single string value
-  * @param $x array The parsed array from a rule
-  * @param $joinChar An optional character to join each element
-  */
-  function flatstr($x, $rejectSpace = false, $joinChar = '') {
-    return implode($joinChar, flatten($x, $rejectSpace, []));
-  }
+  // Any code that needs to be added to the language parser can go here
 
 }
 
-start = ex:expr { return flatten($ex, true); }
+start = expr
 
 expr =
-  e: ( whitespace
-       ( ( value binary_operator expr )
-       / ( value NOT ? ( LIKE / GLOB / REGEXP / MATCH ) expr ( ESCAPE expr )? )
-       / ( value ( ISNULL / NOTNULL / ( NOT NULL ) ) )
-       / ( value IS NOT ? expr )
-       / ( value NOT ? BETWEEN expr AND expr )
-       / value ) )
-  { return flatten($e[1]); }
+  e: ( whitespace ( value binary_operator value ) ) { return $e[1]; }
 
 type_name =
   ( name )+
@@ -92,15 +34,15 @@ signed_number =
 value =
   v: ( whitespace
          ( ( j: json_data_name
-           { return [ 'json_data_name' => $j ]; } )
+           { return [ 'type' => 'json_field', 'value' => $j ]; } )
        / ( x: literal_value
-           { return [ 'literal' => $x ]; } )
+           { return [ 'type' => 'literal', 'value' => $x ]; } )
        / ( c: column_name
-           { return [ 'column' => $c ]; } )
+           { return [ 'type' => 'field', 'value' => $c ]; } )
 
        / ( unary_operator expr )
        / call_function
-       / ( whitespace lparen expr whitespace rparen )
+       / subexpr:( whitespace lparen expr whitespace rparen ) { return $subexpr[2]; } // Only return the sub expression array, we don't need parenthesis in the final parse tree
        / ( CAST lparen expr AS type_name rparen ) ) )
   { return $v[1]; }
 
@@ -112,21 +54,20 @@ call_function =
                / whitespace star )?
     whitespace rparen )
 
-json_data_name = dn:("data" dot json_element) { return flatstr($dn, true); }
+json_data_name = dn:("data" dot json_element) { return \ProcessMaker\Query\Processor::flatstr($dn, true); }
 
-json_element =  el:((json_array_element / name) (dot json_element)*) { return flatstr($el, true); }
+json_element =  el:((json_array_element / name) (dot json_element)*) { return \ProcessMaker\Query\Processor::flatstr($el, true); }
 
-json_array_element = ae:(name lbrack digit+ rbrack) { return flatstr($ae); }
+json_array_element = ae:(name lbrack digit+ rbrack) { return \ProcessMaker\Query\Processor::flatstr($ae); }
 
 literal_value =
-  ( numeric_literal / string_literal 
-  / NULL / CURRENT_TIME / CURRENT_DATE / CURRENT_TIMESTAMP )
+  ( numeric_literal / string_literal )
 
 numeric_literal =
   digits:( ( ( ( digit )+ ( decimal_point ( digit )+ )? )
            / ( decimal_point ( digit )+ ) )
            ( E ( plus / minus )? ( digit )+ )? )
-  { $x = flatstr($digits);
+  { $x = \ProcessMaker\Query\Processor::flatstr($digits);
     // If there's a decimal point, then absolutely return float val
     if (strpos($x, '.') !== false) {
       return floatval($x);
@@ -146,7 +87,7 @@ lbrack = '['
 rbrack = ']'
 star = '*'
 newline = '\n'
-string_literal = str:('"' (escape_char / [^"])* '"') { return implode("", flatten($str)); }
+string_literal = str:('"' (escape_char / [^"])* '"') { return \ProcessMaker\Query\Processor::flatstr($str[1]); }
 escape_char = '\\' .
 nil = ''
 
@@ -162,17 +103,12 @@ unary_operator =
 
 binary_operator =
   x: ( whitespace
-       ('||'
-        / '*' / '/' / '%'
-        / '+' / '-'
-        / '<<' / '>>' / '&' / '|'
-        / '<=' / '>='
+        ( '<=' / '>='
         / '<' / '>'
         / '=' / '==' / '!=' / '<>'
-        / 'IS'i / 'IS NOT'i / 'IN'i / 'LIKE'i / 'GLOB'i / 'MATCH'i / 'REGEXP'i
         / 'AND'i
         / 'OR'i) )
-  { return strtoupper($x[1]); }
+  { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
 
 digit = [0-9]
 decimal_point = dot

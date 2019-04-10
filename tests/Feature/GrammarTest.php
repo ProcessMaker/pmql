@@ -4,53 +4,41 @@ namespace ProcessMaker\Query\Tests\Feature;
 use ProcessMaker\Query\Query;
 use ProcessMaker\Query\SyntaxError;
 use ProcessMaker\Query\Tests\TestCase;
+use ProcessMaker\Query\Tests\Models\TestRecord;
 
 
 class GrammarTest extends TestCase
 {
     /**
-     * Test to see if grammar supports "name = value"
+     * Check to see if syntax errors are thrown
      */
-    public function testSimpleGrammar()
+    public function testSyntaxErrorIsThrown()
     {
-        $query = app()->make(Query::class);
-        dd($query->parse('requester="Mila" and (data.credit.score >= 750 OR data.credit.score < 500)'));
-        //$this->assertEquals($query->parse('name'), 2);
-    }
-
-    /*
-    public function testAdvancedGrammar()
-    {
-        $query = app()->make(Query::class);
-        $this->assertEquals($query->parse('2*(1+5)'), 12);
-    }
-    */
-
-
-    /**
-     * Ensure we throw a grammar error. 
-     */
-    /*
-    public function testGrammarError()
-    {
+        // Note the extra double quote at the end
         $this->expectException(SyntaxError::class);
-        $query = app()->make(Query::class);
-   }
-   */
-
-    /** @test */
-    /*
-    public function it_runs_the_migrations()
-    {
-        $record = \DB::table('test_records')->where('id', '=', 1)->first();
-        $this->assertEquals(['test' => 'value'], $record->data);
-        $columns = \Schema::getColumnListing('test_records');
-        $this->assertEquals([
-            'id',
-            'created_at',
-            'updated_at',
-            'data',
-        ], $columns);
+        $results = TestRecord::pmql("data.first_name = \"Taylor\"\"")->get();
     }
-    */
+
+    public function testJsonDataCheck()
+    {
+        $results = TestRecord::pmql("data.first_name = \"Taylor\"")->get();
+        $this->assertCount(1, $results);
+        $results = TestRecord::pmql("data.first_name = \"Invalid\"")->get();
+        $this->assertCount(0, $results);
+    }
+
+    public function testPMQLChained()
+    {
+        $results = TestRecord::where('id', 1)->pmql("data.first_name = \"Taylor\"")->get();
+        $this->assertCount(1, $results);
+        $results = TestRecord::where('id', 1)->pmql("data.first_name = \"NoMatch\"")->get();
+        $this->assertCount(0, $results);
+    }
+
+    public function testPMQLAgainstRegularColumn()
+    {
+        $results = TestRecord::pmql('id = 1')->get();
+        $this->assertCount(1, $results);
+    }
+
 }

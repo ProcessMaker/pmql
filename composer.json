@@ -23,7 +23,6 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ProcessMaker\\Query\\Providers\\QueryServiceProvider"
             ]
         }
     },

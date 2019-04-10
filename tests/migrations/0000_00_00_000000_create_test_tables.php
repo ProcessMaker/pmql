@@ -13,48 +13,56 @@ class CreateTestTables extends Migration
     {
         Schema::create('test_records', function ($table) {
             $table->increments('id');
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->json('data');
             $table->timestamps();
         });
-    
+
         $now = Carbon::now();
-        
+
         DB::table('test_records')->insert([
             'created_at' => $now,
             'updated_at' => $now,
-            'first_name' => 'Taylor',
-            'last_name' => 'Dondich'
+            'data' => json_encode([
+                'first_name' => 'Taylor',
+                'last_name' => 'Dondich'
+            ])
         ]);
 
         DB::table('test_records')->insert([
             'created_at' => $now,
             'updated_at' => $now,
-            'first_name' => 'Alan',
-            'last_name' => 'Bollinger'
+            'data' => json_encode([
+                'first_name' => 'Alan',
+                'last_name' => 'Bollinger'
+            ])
         ]);
 
         DB::table('test_records')->insert([
             'created_at' => $now,
             'updated_at' => $now,
-            'first_name' => 'Mila',
-            'last_name' => 'Endo'
+            'data' => json_encode([
+                'first_name' => 'Mila',
+                'last_name' => 'Endo'
+            ])
         ]);
 
         DB::table('test_records')->insert([
             'created_at' => $now,
             'updated_at' => $now,
-            'first_name' => 'Ryan',
-            'last_name' => 'Cooley'
+            'data' => json_encode([
+                'first_name' => 'Ryan',
+                'last_name' => 'Cooley'
+            ])
         ]);
 
         DB::table('test_records')->insert([
             'created_at' => $now,
             'updated_at' => $now,
-            'first_name' => 'Nolan',
-            'last_name' => 'Ehrstrom'
+            'data' => json_encode([
+                'first_name' => 'Nolan',
+                'last_name' => 'Ehrstrom'
+            ])
         ]);
-
     }
 
     /**
