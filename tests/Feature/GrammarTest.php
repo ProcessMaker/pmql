@@ -41,4 +41,18 @@ class GrammarTest extends TestCase
         $this->assertCount(1, $results);
     }
 
+    public function testPMQLWithOverriddenExpressionHandler()
+    {
+        $results = TestRecord::pmql('fakeid = 1', function($query, $field, $op, $value) {
+            // Let's rewrite query from fakeid to id
+            if($field['value'] == 'fakeid') {
+                return $query->where('id', $op['value'], $value['value']);
+            }
+            // We don't want to handle it, let PMQL trait handle it
+            return null;
+
+        })->get();
+        $this->assertCount(1, $results);
+    }
+
 }

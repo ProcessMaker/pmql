@@ -25,10 +25,12 @@ class Processor
             // Handle parameter groupi ng
         } else {
             // This is a simple column <op> value
+            $result = null;
             if ($fieldCallbackOverride) {
-                $fieldCallbackOverride($tree[0], $tree[1], $tree[2]);
-            } else {
-                // Try and do default behavior
+                $result = $fieldCallbackOverride($queryBuilder, $tree[0], $tree[1], $tree[2]);
+            }
+            // Check to see if we didn't run a fieldCallback
+            if (!$result) {
                 switch ($tree[0]['type']) {
                     case 'field':
                         $queryBuilder = $queryBuilder->where($tree[0]['value'], $tree[1]['value'], $tree[2]['value']);
@@ -88,7 +90,8 @@ class Processor
         return $acc;
     }
 
-    public static function flatstr($x, $rejectSpace = false, $joinChar = '') {
+    public static function flatstr($x, $rejectSpace = false, $joinChar = '')
+    {
         return implode($joinChar, self::flatten($x, $rejectSpace, []));
-      }
+    }
 }
