@@ -18,9 +18,44 @@ class Processor
     public static function process($queryBuilder, $tree, $fieldCallbackOverride = null)
     {
         if (self::isExpr($tree[0])) {
-            dd('not impl');
+            dd("TOTES EXPR ON THE LEFT");
             // Recursive head down to the L node
-            self::process($queryBuilder, $tree[0]);
+            $queryBuilder = self::process($queryBuilder, $tree[0]);
+            // Now check to see if the R node is an expression, if not, then do our normal behavior.  If so, we need to add it into a callback
+            if (self::isExpr($tree[2])) {
+                dd('not impl');
+            } else {
+                switch ($tree[2]['value']) {
+                    case 'AND':
+                        $method = "where";
+                        break;
+                    case 'OR':
+                        $method = "orWhere";
+                        break;
+                    default:
+                        throw new \Exception("Operation not supported");
+                }
+                // Check
+                // This is a simple column <op> value
+                $result = null;
+                if ($fieldCallbackOverride) {
+                    $result = $fieldCallbackOverride($queryBuilder, $tree[0], $tree[1], $tree[2]);
+                }
+                // Check to see if we didn't run a fieldCallback
+                if (!$result) {
+                    switch ($tree[0]['type']) {
+                        case 'field':
+                            $queryBuilder = $queryBuilder->$method($tree[0]['value'], $tree[1]['value'], $tree[2]['value']);
+                            break;
+                        case 'json_field':
+                            $field = str_replace('.', '->', $tree[0]['value']);
+                            $queryBuilder = $queryBuilder->$method($field, $tree[1]['value'], $tree[2]['value']);
+                            break;
+                        default:
+                            throw \Exception("Invalid left node type in query parse.");
+                    }
+                }
+            }
         } else if (self::isExpr($tree[2])) {
             // Handle parameter groupi ng
         } else {
