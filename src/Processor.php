@@ -30,7 +30,12 @@ class Processor
                     $builder->$method($this->processCollection($expression));
                 } else {
                     if($this->callback) {
-                        $builder->$method(($this->callback)($expression));
+                        $func = ($this->callback)($expression);
+                        if(is_callable($func)) {
+                            $builder->$method(($this->callback)($expression));
+                        } else {
+                            $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
+                        }
                     } else {
                         $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
                     }
