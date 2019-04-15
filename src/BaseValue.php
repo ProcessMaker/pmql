@@ -15,6 +15,11 @@ abstract class BaseValue
         return $this->value;
     }
 
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
     public function toEloquent()
     {
         return $this->value();

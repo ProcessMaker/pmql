@@ -1,8 +1,7 @@
 {
     "name": "processmaker/pmql",
-    "friendly_name": "ProcessMaker Query Language Package for Laravel",
     "version": "1.0.0",
-    "description": "A SQL like query language that supports SQL and non-SQL targets when querying",
+    "description": "An Eloquent trait that provides the pmql scope to allow converting simple sql criteria clauses to Eloquent",
     "type": "project",
     "authors": [
         {
@@ -27,7 +26,7 @@
         }
     },
     "require": {
-	"laravel/framework": "5.7.*"
+        "laravel/framework": "5.7.*"
     },
     "require-dev": {
         "orchestra/testbench": "^3.5",

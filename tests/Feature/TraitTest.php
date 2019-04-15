@@ -60,15 +60,13 @@ class TraitTest extends TestCase
      */
     public function testQueryWithOverride()
     {
-        $results = TestRecord::pmql('invalidid = 1', function($expression) {
-            if(is_a($expression->field, ColumnField::class) && $expression->field->field() == 'invalidid') {
-                $expression->field->setField('id');
+        $results = TestRecord::pmql('invalidid = 1', function ($expression) {
+            if (is_a($expression->field, ColumnField::class) && $expression->field->field() == 'invalidid') {
+                return function ($builder) use ($expression) {
+                    $builder->{$expression->logicalMethod()}('id', $expression->operator, $expression->value->toEloquent());
+                };
             }
-            return function($builder) use($expression) {
-                $builder->{$expression->logicalMethod()}($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
-            };
         })->get();
         $this->assertCount(1, $results);
-
     }
 }

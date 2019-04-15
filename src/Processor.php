@@ -25,7 +25,7 @@ class Processor
     {
         return function($builder) use($collection) {
             foreach($collection as $expression) {
-                $method = $expression->logical() == BaseExpression::AND ? 'where' : 'orWhere';
+                $method = $expression->logicalMethod();
                 if(is_a($expression, ExpressionCollection::class)) {
                     $builder->$method($this->processCollection($expression));
                 } else {

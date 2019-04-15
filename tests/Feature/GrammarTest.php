@@ -108,24 +108,27 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('(value = 5)');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    [
-                        'type' => 'field',
-                        'value' => 'value'
-                    ],
-                    [
-                        'type' => 'operator',
-                        'value' => '='
-                    ],
-                    [
-                        'type' => 'literal',
-                        'value' => 5
+                    'logical' => 'AND',
+                    'expressions' => [
+                        [
+                            'field' => [
+                                'ColumnField' => 'value'
+                            ],
+                            'operator' => '=',
+                            'value' => [
+                                'LiteralValue' => 5.0
+                            ],
+                            'logical' => 'AND'
+                        ]
                     ]
                 ]
             ]
-        ], $tree);
+        ], $tree->toArray());
     }
+
 
     public function testGroupedExpression()
     {
@@ -268,13 +271,15 @@ class GrammarTest extends TestCase
                                 ],
                                 'operator' => '=',
                                 'value' => [
-                                    'LiteralValue' =>'dog' 
+                                    'LiteralValue' => 'dog'
                                 ],
                                 'logical' => 'AND'
                             ]
                         ]
                     ]
                 ]
-            ], $tree->toArray());
+            ],
+            $tree->toArray()
+        );
     }
 }
