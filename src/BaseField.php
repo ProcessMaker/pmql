@@ -15,6 +15,16 @@ abstract class BaseField
         return $this->field;
     }
 
+    public function field()
+    {
+        return $this->field;
+    }
+
+    public function setField($field)
+    {
+        $this->field = $field;
+    }
+
     public function toArray()
     {
         return [

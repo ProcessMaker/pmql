@@ -22,4 +22,9 @@ abstract class BaseExpression
     {
         return $this->logical;
     }
+
+    public function logicalMethod()
+    {
+        return $this->logical == BaseExpression::OR ? 'orWhere' : 'where';
+    }
 }

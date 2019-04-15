@@ -29,7 +29,11 @@ class Processor
                 if(is_a($expression, ExpressionCollection::class)) {
                     $builder->$method($this->processCollection($expression));
                 } else {
-                    $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
+                    if($this->callback) {
+                        $builder->$method(($this->callback)($expression));
+                    } else {
+                        $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
+                    }
                 }
             }
             return $builder;

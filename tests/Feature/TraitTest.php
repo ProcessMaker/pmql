@@ -4,6 +4,7 @@ namespace ProcessMaker\Query\Tests\Feature;
 use ProcessMaker\Query\SyntaxError;
 use ProcessMaker\Query\Tests\TestCase;
 use ProcessMaker\Query\Tests\Models\TestRecord;
+use ProcessMaker\Query\ColumnField;
 
 class TraitTest extends TestCase
 {
@@ -52,5 +53,22 @@ class TraitTest extends TestCase
     {
         $results = TestRecord::pmql('data.first_name = "Taylor" OR data.first_name = "Alan"')->get();
         $this->assertCount(2, $results);
+    }
+
+    /**
+     * This tests the callback for dealing with callbacks to handle overwriting expression handling
+     */
+    public function testQueryWithOverride()
+    {
+        $results = TestRecord::pmql('invalidid = 1', function($expression) {
+            if(is_a($expression->field, ColumnField::class) && $expression->field->field() == 'invalidid') {
+                $expression->field->setField('id');
+            }
+            return function($builder) use($expression) {
+                $builder->{$expression->logicalMethod()}($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
+            };
+        })->get();
+        $this->assertCount(1, $results);
+
     }
 }
