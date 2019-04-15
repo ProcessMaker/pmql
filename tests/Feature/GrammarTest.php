@@ -16,21 +16,20 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('value = 5');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    'type' => 'field',
-                    'value' => 'value'
-                ],
-                [
-                    'type' => 'operator',
-                    'value' => '='
-                ],
-                [
-                    'type' => 'literal',
-                    'value' => 5.0
+                    'field' => [
+                        'ColumnField' => 'value'
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 5.0
+                    ],
+                    'logical' => 'AND'
                 ]
             ]
-        ], $tree);
+        ], $tree->toArray());
     }
 
     public function testSimpleExpressionWithNestedField()
@@ -38,21 +37,20 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('data.customer.name = "Taylor"');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    'type' => 'nested_field',
-                    'value' => 'data.customer.name'
-                ],
-                [
-                    'type' => 'operator',
-                    'value' => '='
-                ],
-                [
-                    'type' => 'literal',
-                    'value' => "Taylor"
+                    'field' => [
+                        'JsonField' => 'data.customer.name'
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 'Taylor'
+                    ],
+                    'logical' => 'AND'
                 ]
             ]
-        ], $tree);
+        ], $tree->toArray());
     }
 
     public function testSimpleExpressionWithNestedFieldArray()
@@ -60,21 +58,20 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('data.customer.orders[0].name = "Taylor"');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    'type' => 'nested_field',
-                    'value' => 'data.customer.orders[0].name'
-                ],
-                [
-                    'type' => 'operator',
-                    'value' => '='
-                ],
-                [
-                    'type' => 'literal',
-                    'value' => "Taylor"
+                    'field' => [
+                        'JsonField' => 'data.customer.orders[0].name'
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 'Taylor'
+                    ],
+                    'logical' => 'AND'
                 ]
             ]
-        ], $tree);
+        ], $tree->toArray());
     }
 
 
@@ -83,21 +80,20 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('value = "test"');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    'type' => 'field',
-                    'value' => 'value'
-                ],
-                [
-                    'type' => 'operator',
-                    'value' => '='
-                ],
-                [
-                    'type' => 'literal',
-                    'value' => 'test'
+                    'field' => [
+                        'ColumnField' => 'value'
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 'test'
+                    ],
+                    'logical' => 'AND'
                 ]
             ]
-        ], $tree);
+        ], $tree->toArray());
     }
 
     public function testSyntaxErrorThrownWhenUsingInvalidValue()
@@ -136,61 +132,40 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('value = 5 AND foo = "baz" AND cat = "dog"');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    'type' => 'field',
-                    'value' => 'value'
+                    'field' => [
+                        'ColumnField' => 'value'
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 5.0
+                    ],
+                    'logical' => 'AND'
                 ],
                 [
-                    'type' => 'operator',
-                    'value' => '='
+                    'field' => [
+                        'ColumnField' => 'foo'
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 'baz'
+                    ],
+                    'logical' => 'AND'
                 ],
                 [
-                    'type' => 'literal',
-                    'value' => 5
-                ]
-            ],
-            [
-                'group_operator' => [
-                    'type' => 'operator',
-                    'value' => 'AND'
-                ],
-                'expression' => [
-                    [
-                        'type' => 'field',
-                        'value' => 'foo'
+                    'field' => [
+                        'ColumnField' => 'cat'
                     ],
-                    [
-                        'type' => 'operator',
-                        'value' => '='
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 'dog'
                     ],
-                    [
-                        'type' => 'literal',
-                        'value' => 'baz'
-                    ]
-                ]
-            ],
-            [
-                'group_operator' => [
-                    'type' => 'operator',
-                    'value' => 'AND'
-                ],
-                'expression' => [
-                    [
-                        'type' => 'field',
-                        'value' => 'cat'
-                    ],
-                    [
-                        'type' => 'operator',
-                        'value' => '='
-                    ],
-                    [
-                        'type' => 'literal',
-                        'value' => 'dog'
-                    ]
+                    'logical' => 'AND'
                 ]
             ]
-        ], $tree);
+        ], $tree->toArray());
     }
 
     public function testGroupedExpressionInsideOr()
@@ -198,63 +173,46 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('value = 5 OR (foo = "baz" AND cat = "dog")');
         $this->assertEquals([
-            [
+            'logical' => 'AND',
+            'expressions' => [
                 [
-                    'type' => 'field',
-                    'value' => 'value'
-                ],
-                [
-                    'type' => 'operator',
-                    'value' => '='
-                ],
-                [
-                    'type' => 'literal',
-                    'value' => 5
-                ]
-            ],
-            [
-                'group_operator' => [
-                    'type' => 'operator',
-                    'value' => 'OR'
-                ],
-                'expression' => [
-                    [
-                        [
-                            'type' => 'field',
-                            'value' => 'foo'
-                        ],
-                        [
-                            'type' => 'operator',
-                            'value' => '='
-                        ],
-                        [
-                            'type' => 'literal',
-                            'value' => 'baz'
-                        ]
+                    'field' => [
+                        'ColumnField' => 'value'
                     ],
-                    [
-                        'group_operator' => [
-                            'type' => 'operator',
-                            'value' => 'AND'
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => 5.0
+                    ],
+                    'logical' => 'AND'
+                ],
+                [
+                    'logical' => 'OR',
+                    'expressions' => [
+                        [
+                            'field' => [
+                                'ColumnField' => 'foo'
+                            ],
+                            'operator' => '=',
+                            'value' => [
+                                'LiteralValue' => 'baz'
+                            ],
+                            'logical' => 'AND'
                         ],
-                        'expression' => [
-                            [
-                                'type' => 'field',
-                                'value' => 'cat'
+                        [
+                            'field' => [
+                                'ColumnField' => 'cat'
                             ],
-                            [
-                                'type' => 'operator',
-                                'value' => '='
+                            'operator' => '=',
+                            'value' => [
+                                'LiteralValue' => 'dog'
                             ],
-                            [
-                                'type' => 'literal',
-                                'value' => 'dog'
-                            ]
+                            'logical' => 'AND'
                         ]
                     ]
                 ]
             ]
-        ], $tree);
+
+        ], $tree->toArray());
     }
 
     public function testTwoGroupedExpressionsJoined()
@@ -262,111 +220,61 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('(value = 5 OR value2 = 10) OR (foo = "baz" AND cat = "dog")');
         $this->assertEquals(
-            array (
-                0 =>
-                array (
-                  0 =>
-                  array (
-                    0 =>
-                    array (
-                      'type' => 'field',
-                      'value' => 'value',
-                    ),
-                    1 =>
-                    array (
-                      'type' => 'operator',
-                      'value' => '=',
-                    ),
-                    2 =>
-                    array (
-                      'type' => 'literal',
-                      'value' => 5.0,
-                    ),
-                  ),
-                  1 =>
-                  array (
-                    'group_operator' =>
-                    array (
-                      'type' => 'operator',
-                      'value' => 'OR',
-                    ),
-                    'expression' =>
-                    array (
-                      0 =>
-                      array (
-                        'type' => 'field',
-                        'value' => 'value2',
-                      ),
-                      1 =>
-                      array (
-                        'type' => 'operator',
-                        'value' => '=',
-                      ),
-                      2 =>
-                      array (
-                        'type' => 'literal',
-                        'value' => 10.0,
-                      ),
-                    ),
-                  ),
-                ),
-                1 =>
-                array (
-                  'group_operator' =>
-                  array (
-                    'type' => 'operator',
-                    'value' => 'OR',
-                  ),
-                  'expression' =>
-                  array (
-                    0 =>
-                    array (
-                      0 =>
-                      array (
-                        'type' => 'field',
-                        'value' => 'foo',
-                      ),
-                      1 =>
-                      array (
-                        'type' => 'operator',
-                        'value' => '=',
-                      ),
-                      2 =>
-                      array (
-                        'type' => 'literal',
-                        'value' => 'baz',
-                      ),
-                    ),
-                    1 =>
-                    array (
-                      'group_operator' =>
-                      array (
-                        'type' => 'operator',
-                        'value' => 'AND',
-                      ),
-                      'expression' =>
-                      array (
-                        0 =>
-                        array (
-                          'type' => 'field',
-                          'value' => 'cat',
-                        ),
-                        1 =>
-                        array (
-                          'type' => 'operator',
-                          'value' => '=',
-                        ),
-                        2 =>
-                        array (
-                          'type' => 'literal',
-                          'value' => 'dog',
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ,$tree
-        );
+            [
+                'logical' => 'AND',
+                'expressions' => [
+                    [
+                        'logical' => 'AND',
+                        'expressions' => [
+                            [
+                                'field' => [
+                                    'ColumnField' => 'value'
+                                ],
+                                'operator' => '=',
+                                'value' => [
+                                    'LiteralValue' => 5.0
+                                ],
+                                'logical' => 'AND'
+                            ],
+                            [
+                                'field' => [
+                                    'ColumnField' => 'value2'
+                                ],
+                                'operator' => '=',
+                                'value' => [
+                                    'LiteralValue' => 10.0
+                                ],
+                                'logical' => 'OR'
+                            ]
+                        ]
+
+                    ],
+                    [
+                        'logical' => 'OR',
+                        'expressions' => [
+                            [
+                                'field' => [
+                                    'ColumnField' => 'foo'
+                                ],
+                                'operator' => '=',
+                                'value' => [
+                                    'LiteralValue' => 'baz'
+                                ],
+                                'logical' => 'AND'
+                            ],
+                            [
+                                'field' => [
+                                    'ColumnField' => 'cat'
+                                ],
+                                'operator' => '=',
+                                'value' => [
+                                    'LiteralValue' =>'dog' 
+                                ],
+                                'logical' => 'AND'
+                            ]
+                        ]
+                    ]
+                ]
+            ], $tree->toArray());
     }
 }

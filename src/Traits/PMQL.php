@@ -10,12 +10,13 @@ use ProcessMaker\Query\Processor;
 trait PMQL
 {
     // Scope to apply to query building for this eloquent model
-    public function scopePMQL($builder, $query, $customCallback = null)
+    public function scopePMQL($builder, $query, $callback = null)
     {
         $parser = new Parser;
         $tree = $parser->parse($query);
 
-        return Processor::process($builder, $tree, $customCallback);
+        $processor = new Processor($tree, $callback);
+        return $processor->process($builder);
     }
 
 }

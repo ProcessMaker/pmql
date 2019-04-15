@@ -17,45 +17,40 @@ class TraitTest extends TestCase
         $results = TestRecord::pmql("data.first_name = \"Taylor\"\"")->get();
     }
 
-    public function testJsonDataCheck()
+    public function testSimpleExpression()
     {
-        $results = TestRecord::pmql("data.first_name = \"Taylor\"")->get();
+        $builder = TestRecord::pmql('foo = "bar"');
+        $this->assertEquals('select * from "test_records" where ("foo" = ?)', $builder->toSql());
+        $this->assertEquals([
+            'bar'
+        ], $builder->getBindings());
+    }
+
+    public function testSimpleGroupedExpression()
+    {
+        $builder = TestRecord::pmql('foo = "bar" AND cat = "dog"');
+        $this->assertEquals('select * from "test_records" where ("foo" = ? and "cat" = ?)', $builder->toSql());
+        $this->assertEquals([
+            'bar',
+            'dog'
+        ], $builder->getBindings());
+    }
+
+    public function testQuery()
+    {
+        $results = TestRecord::pmql('data.first_name = "Taylor"')->get();
         $this->assertCount(1, $results);
-        $results = TestRecord::pmql("data.first_name = \"Invalid\"")->get();
+    }
+
+    public function testNoMatchQuery()
+    {
+        $results = TestRecord::pmql('data.first_name = "Invalid"')->get();
         $this->assertCount(0, $results);
     }
 
-    public function testPMQLChained()
+    public function testMatchWithGrouping()
     {
-        $results = TestRecord::where('id', 1)->pmql("data.first_name = \"Taylor\"")->get();
-        $this->assertCount(1, $results);
-        $results = TestRecord::where('id', 1)->pmql("data.first_name = \"NoMatch\"")->get();
-        $this->assertCount(0, $results);
+        $results = TestRecord::pmql('data.first_name = "Taylor" OR data.first_name = "Alan"')->get();
+        $this->assertCount(2, $results);
     }
-
-    public function testPMQLAgainstRegularColumn()
-    {
-        $results = TestRecord::pmql('id = 1')->get();
-        $this->assertCount(1, $results);
-    }
-
-    public function testPMQLWithOverriddenExpressionHandler()
-    {
-        $results = TestRecord::pmql('fakeid = 1', function($query, $field, $op, $value) {
-            // Let's rewrite query from fakeid to id
-            if($field['value'] == 'fakeid') {
-                return $query->where('id', $op['value'], $value['value']);
-            }
-            // We don't want to handle it, let PMQL trait handle it
-            return null;
-        })->get();
-        $this->assertCount(1, $results);
-    }
-
-    public function testPMQLWithANDClause()
-    {
-        $results = TestRecord::pmql("id = 1 AND id = 2")->get();
-        $this->assertCount(1, $results);
-    }
-
 }

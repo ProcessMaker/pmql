@@ -3,83 +3,37 @@ namespace ProcessMaker\Query;
 
 class Processor
 {
-    private static function isExpr($arr)
+    protected $tree;
+    protected $callback; 
+
+    public function __construct($tree, $callback = null)
     {
-        return (count($arr) == 3 && $arr[1]['type'] == 'operator');
+        $this->tree = $tree;
+        $this->callback = $callback;
+    }
+
+    public function process($builder)
+    {
+        $method = $this->tree->logical() == BaseExpression::AND ? 'where' : 'orWhere';
+        return $builder->$method($this->processCollection($this->tree));
     }
 
     // Perform a Post-Order LRN tree traversal to build query
     // See: https://en.wikipedia.org/wiki/Tree_traversal#Post-order_(LRN)
 
-    // $parseTree top level array is 3 elements:
-    // $parseTree[0] = is the left node
-    // $parseTree[1] = is the operator
-    // $parseTree[2] = is the right node
-    public static function process($queryBuilder, $tree, $fieldCallbackOverride = null)
+    private function processCollection($collection)
     {
-        if (self::isExpr($tree[0])) {
-            dd("TOTES EXPR ON THE LEFT");
-            // Recursive head down to the L node
-            $queryBuilder = self::process($queryBuilder, $tree[0]);
-            // Now check to see if the R node is an expression, if not, then do our normal behavior.  If so, we need to add it into a callback
-            if (self::isExpr($tree[2])) {
-                dd('not impl');
-            } else {
-                switch ($tree[2]['value']) {
-                    case 'AND':
-                        $method = "where";
-                        break;
-                    case 'OR':
-                        $method = "orWhere";
-                        break;
-                    default:
-                        throw new \Exception("Operation not supported");
-                }
-                // Check
-                // This is a simple column <op> value
-                $result = null;
-                if ($fieldCallbackOverride) {
-                    $result = $fieldCallbackOverride($queryBuilder, $tree[0], $tree[1], $tree[2]);
-                }
-                // Check to see if we didn't run a fieldCallback
-                if (!$result) {
-                    switch ($tree[0]['type']) {
-                        case 'field':
-                            $queryBuilder = $queryBuilder->$method($tree[0]['value'], $tree[1]['value'], $tree[2]['value']);
-                            break;
-                        case 'json_field':
-                            $field = str_replace('.', '->', $tree[0]['value']);
-                            $queryBuilder = $queryBuilder->$method($field, $tree[1]['value'], $tree[2]['value']);
-                            break;
-                        default:
-                            throw \Exception("Invalid left node type in query parse.");
-                    }
+        return function($builder) use($collection) {
+            foreach($collection as $expression) {
+                $method = $expression->logical() == BaseExpression::AND ? 'where' : 'orWhere';
+                if(is_a($expression, ExpressionCollection::class)) {
+                    $builder->$method($this->processCollection($expression));
+                } else {
+                    $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
                 }
             }
-        } else if (self::isExpr($tree[2])) {
-            // Handle parameter groupi ng
-        } else {
-            // This is a simple column <op> value
-            $result = null;
-            if ($fieldCallbackOverride) {
-                $result = $fieldCallbackOverride($queryBuilder, $tree[0], $tree[1], $tree[2]);
-            }
-            // Check to see if we didn't run a fieldCallback
-            if (!$result) {
-                switch ($tree[0]['type']) {
-                    case 'field':
-                        $queryBuilder = $queryBuilder->where($tree[0]['value'], $tree[1]['value'], $tree[2]['value']);
-                        break;
-                    case 'json_field':
-                        $field = str_replace('.', '->', $tree[0]['value']);
-                        $queryBuilder = $queryBuilder->where($field, $tree[1]['value'], $tree[2]['value']);
-                        break;
-                    default:
-                        throw \Exception("Invalid left node type in query parse.");
-                }
-            }
-        }
-        return $queryBuilder;
+            return $builder;
+        };
     }
 
     public static function append($arr, $x)

@@ -321,21 +321,32 @@ class Parser {
     private $peg_c91;
 
     private function peg_f0($le, $ler) { 
-      return array_merge([$le], $ler);
+      $collection = new \ProcessMaker\Query\ExpressionCollection();
+      // Add to our collection
+      if($le) {
+        $collection[] = $le;
+      }
+      foreach($ler as $expression) {
+        // Add each expression into our collection
+        $collection[] = $expression;
+      }
+      return $collection;
     }
-    private function peg_f1($le, $ler) {
-      return array_merge([$le], $ler);
+    private function peg_f1($fe) {
+      return $fe;
     }
-    private function peg_f2($field, $op, $right) {
-      return [$field, $op, $right];
+    private function peg_f2($field, $op, $value) {
+      // Return a new expression instance
+      return new \ProcessMaker\Query\Expression($field, $op['value'], $value);
     }
     private function peg_f3($go, $le) {
-      return ['group_operator' => $go, 'expression' => $le];
+      $le->setLogical($go['value']);
+      return $le;
     }
-    private function peg_f4($j) { return [ 'type' => 'nested_field', 'value' => $j ]; }
-    private function peg_f5($c) { return [ 'type' => 'field', 'value' => $c ]; }
+    private function peg_f4($j) { return new \ProcessMaker\Query\JsonField($j); }
+    private function peg_f5($c) { return new \ProcessMaker\Query\ColumnField($c); }
     private function peg_f6($v) { return $v[1]; }
-    private function peg_f7($x) { return [ 'type' => 'literal', 'value' => $x ]; }
+    private function peg_f7($x) { return new \ProcessMaker\Query\LiteralValue($x) ; }
     private function peg_f8($dn) { return \ProcessMaker\Query\Processor::flatstr($dn, true); }
     private function peg_f9($el) { return \ProcessMaker\Query\Processor::flatstr($el, true); }
     private function peg_f10($ae) { return \ProcessMaker\Query\Processor::flatstr($ae); }
@@ -393,28 +404,17 @@ class Parser {
         if ($s2 !== $this->peg_FAILED) {
           $s3 = $this->peg_parsewhitespace();
           if ($s3 !== $this->peg_FAILED) {
-            $s4 = $this->peg_parselogicExpression();
+            $s4 = $this->peg_parsefullExpression();
             if ($s4 !== $this->peg_FAILED) {
-              $s5 = array();
-              $s6 = $this->peg_parselogicExpressionRest();
-              while ($s6 !== $this->peg_FAILED) {
-                $s5[] = $s6;
-                $s6 = $this->peg_parselogicExpressionRest();
-              }
+              $s5 = $this->peg_parsewhitespace();
               if ($s5 !== $this->peg_FAILED) {
-                $s6 = $this->peg_parsewhitespace();
+                $s6 = $this->peg_parserparen();
                 if ($s6 !== $this->peg_FAILED) {
-                  $s7 = $this->peg_parserparen();
+                  $s7 = $this->peg_parsewhitespace();
                   if ($s7 !== $this->peg_FAILED) {
-                    $s8 = $this->peg_parsewhitespace();
-                    if ($s8 !== $this->peg_FAILED) {
-                      $this->peg_reportedPos = $s0;
-                      $s1 = $this->peg_f1($s4, $s5);
-                      $s0 = $s1;
-                    } else {
-                      $this->peg_currPos = $s0;
-                      $s0 = $this->peg_FAILED;
-                    }
+                    $this->peg_reportedPos = $s0;
+                    $s1 = $this->peg_f1($s4);
+                    $s0 = $s1;
                   } else {
                     $this->peg_currPos = $s0;
                     $s0 = $this->peg_FAILED;

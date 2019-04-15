@@ -21,46 +21,51 @@
 start  = fullExpression
 
 fullExpression = le:logicExpression ler:logicExpressionRest* { 
-  return array_merge([$le], $ler);
+  $collection = new \ProcessMaker\Query\ExpressionCollection();
+  // Add to our collection
+  if($le) {
+    $collection[] = $le;
+  }
+  foreach($ler as $expression) {
+    // Add each expression into our collection
+    $collection[] = $expression;
+  }
+  return $collection;
 }
 
-logicExpression = _ lparen _ le:logicExpression ler:logicExpressionRest* _ rparen _ {
-  return array_merge([$le], $ler);
+//logicExpression = _ lparen _ le:logicExpression ler:logicExpressionRest* _ rparen _ {
+logicExpression = _ lparen _ fe:fullExpression _ rparen _ {
+  return $fe;
 }
 /
-field:field _ op:binary_operator _ right:value _ {
-  return [$field, $op, $right];
+field:field _ op:binary_operator _ value:value _ {
+  // Return a new expression instance
+  return new \ProcessMaker\Query\Expression($field, $op['value'], $value);
 }
 
 logicExpressionRest = go:group_operator _ le:logicExpression {
-  return ['group_operator' => $go, 'expression' => $le];
+  $le->setLogical($go['value']);
+  return $le;
 }
-
-/*
-expr = e:( whitespace
-       ( 
-         ( field binary_operator expr )
-         / ( field NOT ? ( LIKE  ) expr )
-         / value 
-       ) 
-  ) { return $e[1]; }
-*/
 
 field =
   v: ( whitespace ( 
     ( 
-      j: nested_field { return [ 'type' => 'nested_field', 'value' => $j ]; } 
+      j: nested_field { return new \ProcessMaker\Query\JsonField($j); } 
     )
     /
     ( 
-      c: column_name { return [ 'type' => 'field', 'value' => $c ]; } 
+      c: column_name { return new \ProcessMaker\Query\ColumnField($c); } 
     )
   ) ) { return $v[1]; }
 
+/**
+* Currently what values we support. Right now we only support literals
+*/
 value =
   v: ( whitespace ( 
     ( 
-      x: literal_value { return [ 'type' => 'literal', 'value' => $x ]; } 
+      x: literal_value { return new \ProcessMaker\Query\LiteralValue($x) ; } 
     )
   ) ) { return $v[1]; }
 
