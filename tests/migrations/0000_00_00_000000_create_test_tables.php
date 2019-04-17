@@ -24,8 +24,10 @@ class CreateTestTables extends Migration
             'updated_at' => $now,
             'data' => json_encode([
                 'first_name' => 'Taylor',
-                'last_name' => 'Dondich'
-            ])
+                'last_name' => 'Dondich',
+                'age' => '37',
+                'dob' => '1981-06-02'
+            ]),
         ]);
 
         DB::table('test_records')->insert([
@@ -33,8 +35,10 @@ class CreateTestTables extends Migration
             'updated_at' => $now,
             'data' => json_encode([
                 'first_name' => 'Alan',
-                'last_name' => 'Bollinger'
-            ])
+                'last_name' => 'Bollinger',
+                'age' => '36',
+                'dob' => '1982-06-02'
+            ]),
         ]);
 
         DB::table('test_records')->insert([
@@ -42,8 +46,12 @@ class CreateTestTables extends Migration
             'updated_at' => $now,
             'data' => json_encode([
                 'first_name' => 'Mila',
-                'last_name' => 'Endo'
-            ])
+                'last_name' => 'Endo',
+                // Sorry Mila, for now you're 35
+                'age' => '35',
+                'dob' => '1983-06-02'
+
+            ]),
         ]);
 
         DB::table('test_records')->insert([
@@ -51,8 +59,11 @@ class CreateTestTables extends Migration
             'updated_at' => $now,
             'data' => json_encode([
                 'first_name' => 'Ryan',
-                'last_name' => 'Cooley'
-            ])
+                'last_name' => 'Cooley',
+                'age' => '34',
+                'dob' => '1984-06-02'
+
+            ]),
         ]);
 
         DB::table('test_records')->insert([
@@ -60,8 +71,10 @@ class CreateTestTables extends Migration
             'updated_at' => $now,
             'data' => json_encode([
                 'first_name' => 'Nolan',
-                'last_name' => 'Ehrstrom'
-            ])
+                'last_name' => 'Ehrstrom',
+                'age' => '33',
+                'dob' => '1985-06-02'
+            ]),
         ]);
     }
 

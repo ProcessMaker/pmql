@@ -5,7 +5,6 @@ use ProcessMaker\Query\Parser;
 use ProcessMaker\Query\SyntaxError;
 use ProcessMaker\Query\Tests\TestCase;
 
-
 class GrammarTest extends TestCase
 {
     /**
@@ -20,15 +19,15 @@ class GrammarTest extends TestCase
             'expressions' => [
                 [
                     'field' => [
-                        'ColumnField' => 'value'
+                        'ColumnField' => 'value',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 5.0
+                        'LiteralValue' => 5.0,
                     ],
-                    'logical' => 'AND'
-                ]
-            ]
+                    'logical' => 'AND',
+                ],
+            ],
         ], $tree->toArray());
     }
 
@@ -41,15 +40,15 @@ class GrammarTest extends TestCase
             'expressions' => [
                 [
                     'field' => [
-                        'JsonField' => 'data.customer.name'
+                        'JsonField' => 'data.customer.name',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 'Taylor'
+                        'LiteralValue' => 'Taylor',
                     ],
-                    'logical' => 'AND'
-                ]
-            ]
+                    'logical' => 'AND',
+                ],
+            ],
         ], $tree->toArray());
     }
 
@@ -62,18 +61,17 @@ class GrammarTest extends TestCase
             'expressions' => [
                 [
                     'field' => [
-                        'JsonField' => 'data.customer.orders[0].name'
+                        'JsonField' => 'data.customer.orders[0].name',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 'Taylor'
+                        'LiteralValue' => 'Taylor',
                     ],
-                    'logical' => 'AND'
-                ]
-            ]
+                    'logical' => 'AND',
+                ],
+            ],
         ], $tree->toArray());
     }
-
 
     public function testSimpleExpressionWithString()
     {
@@ -84,15 +82,15 @@ class GrammarTest extends TestCase
             'expressions' => [
                 [
                     'field' => [
-                        'ColumnField' => 'value'
+                        'ColumnField' => 'value',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 'test'
+                        'LiteralValue' => 'test',
                     ],
-                    'logical' => 'AND'
-                ]
-            ]
+                    'logical' => 'AND',
+                ],
+            ],
         ], $tree->toArray());
     }
 
@@ -115,20 +113,19 @@ class GrammarTest extends TestCase
                     'expressions' => [
                         [
                             'field' => [
-                                'ColumnField' => 'value'
+                                'ColumnField' => 'value',
                             ],
                             'operator' => '=',
                             'value' => [
-                                'LiteralValue' => 5.0
+                                'LiteralValue' => 5.0,
                             ],
-                            'logical' => 'AND'
-                        ]
-                    ]
-                ]
-            ]
+                            'logical' => 'AND',
+                        ],
+                    ],
+                ],
+            ],
         ], $tree->toArray());
     }
-
 
     public function testGroupedExpression()
     {
@@ -139,35 +136,35 @@ class GrammarTest extends TestCase
             'expressions' => [
                 [
                     'field' => [
-                        'ColumnField' => 'value'
+                        'ColumnField' => 'value',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 5.0
+                        'LiteralValue' => 5.0,
                     ],
-                    'logical' => 'AND'
+                    'logical' => 'AND',
                 ],
                 [
                     'field' => [
-                        'ColumnField' => 'foo'
+                        'ColumnField' => 'foo',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 'baz'
+                        'LiteralValue' => 'baz',
                     ],
-                    'logical' => 'AND'
+                    'logical' => 'AND',
                 ],
                 [
                     'field' => [
-                        'ColumnField' => 'cat'
+                        'ColumnField' => 'cat',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 'dog'
+                        'LiteralValue' => 'dog',
                     ],
-                    'logical' => 'AND'
-                ]
-            ]
+                    'logical' => 'AND',
+                ],
+            ],
         ], $tree->toArray());
     }
 
@@ -180,40 +177,40 @@ class GrammarTest extends TestCase
             'expressions' => [
                 [
                     'field' => [
-                        'ColumnField' => 'value'
+                        'ColumnField' => 'value',
                     ],
                     'operator' => '=',
                     'value' => [
-                        'LiteralValue' => 5.0
+                        'LiteralValue' => 5.0,
                     ],
-                    'logical' => 'AND'
+                    'logical' => 'AND',
                 ],
                 [
                     'logical' => 'OR',
                     'expressions' => [
                         [
                             'field' => [
-                                'ColumnField' => 'foo'
+                                'ColumnField' => 'foo',
                             ],
                             'operator' => '=',
                             'value' => [
-                                'LiteralValue' => 'baz'
+                                'LiteralValue' => 'baz',
                             ],
-                            'logical' => 'AND'
+                            'logical' => 'AND',
                         ],
                         [
                             'field' => [
-                                'ColumnField' => 'cat'
+                                'ColumnField' => 'cat',
                             ],
                             'operator' => '=',
                             'value' => [
-                                'LiteralValue' => 'dog'
+                                'LiteralValue' => 'dog',
                             ],
-                            'logical' => 'AND'
-                        ]
-                    ]
-                ]
-            ]
+                            'logical' => 'AND',
+                        ],
+                    ],
+                ],
+            ],
 
         ], $tree->toArray());
     }
@@ -231,25 +228,25 @@ class GrammarTest extends TestCase
                         'expressions' => [
                             [
                                 'field' => [
-                                    'ColumnField' => 'value'
+                                    'ColumnField' => 'value',
                                 ],
                                 'operator' => '=',
                                 'value' => [
-                                    'LiteralValue' => 5.0
+                                    'LiteralValue' => 5.0,
                                 ],
-                                'logical' => 'AND'
+                                'logical' => 'AND',
                             ],
                             [
                                 'field' => [
-                                    'ColumnField' => 'value2'
+                                    'ColumnField' => 'value2',
                                 ],
                                 'operator' => '=',
                                 'value' => [
-                                    'LiteralValue' => 10.0
+                                    'LiteralValue' => 10.0,
                                 ],
-                                'logical' => 'OR'
-                            ]
-                        ]
+                                'logical' => 'OR',
+                            ],
+                        ],
 
                     ],
                     [
@@ -257,29 +254,82 @@ class GrammarTest extends TestCase
                         'expressions' => [
                             [
                                 'field' => [
-                                    'ColumnField' => 'foo'
+                                    'ColumnField' => 'foo',
                                 ],
                                 'operator' => '=',
                                 'value' => [
-                                    'LiteralValue' => 'baz'
+                                    'LiteralValue' => 'baz',
                                 ],
-                                'logical' => 'AND'
+                                'logical' => 'AND',
                             ],
                             [
                                 'field' => [
-                                    'ColumnField' => 'cat'
+                                    'ColumnField' => 'cat',
                                 ],
                                 'operator' => '=',
                                 'value' => [
-                                    'LiteralValue' => 'dog'
+                                    'LiteralValue' => 'dog',
                                 ],
-                                'logical' => 'AND'
-                            ]
-                        ]
-                    ]
-                ]
+                                'logical' => 'AND',
+                            ],
+                        ],
+                    ],
+                ],
             ],
             $tree->toArray()
         );
+    }
+
+    public function testQueryWithFunctionCall()
+    {
+        $parser = new Parser();
+        $tree = $parser->parse('date(foo) = "2012-12-12"');
+        $this->assertEquals([
+            'logical' => 'AND',
+            'expressions' => [
+                [
+                    'field' => [
+                        'FunctionCall' => [
+                            'name' => 'date',
+                            'param' => [
+                                'ColumnField' => 'foo',
+                            ],
+                        ],
+                    ],
+                    'operator' => '=',
+                    'value' => [
+                        'LiteralValue' => '2012-12-12',
+                    ],
+                    'logical' => 'AND',
+                ],
+            ],
+        ], $tree->toArray());
+    }
+
+    public function testQueryWithCast()
+    {
+        $parser = new Parser();
+        $tree = $parser->parse('cast(data.age as integer) > 25');
+        $this->assertEquals([
+            'logical' => 'AND',
+            'expressions' => [
+                [
+                    'field' => [
+                        'Cast' => [
+                            'field' => [
+                                'JsonField' => 'data.age'
+                            ],
+                            'type' => 'integer'
+                        ],
+                    ],
+                    'operator' => '>',
+                    'value' => [
+                        'LiteralValue' => 25.0,
+                    ],
+                    'logical' => 'AND',
+                ],
+            ],
+        ], $tree->toArray());
+
     }
 }

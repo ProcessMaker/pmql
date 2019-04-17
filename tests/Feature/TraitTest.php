@@ -69,4 +69,25 @@ class TraitTest extends TestCase
         })->get();
         $this->assertCount(1, $results);
     }
+
+    public function testQueryWithFunctionCall()
+    {
+        $results = TestRecord::pmql('data.first_name = "TAYLOR"')->get();
+        // Should not match with a full uppercase name
+        $this->assertCount(0, $results);
+        $results = TestRecord::pmql('upper(data.first_name) = "TAYLOR"')->get();
+        $this->assertCount(1, $results);
+    }
+
+    public function testQueryWithCast()
+    {
+        $results = TestRecord::pmql('cast(data.age as integer) > 40')->get();
+        $this->assertCount(0, $results);
+        $results = TestRecord::pmql('cast(data.age as integer) < 40')->get();
+        // Should retrieve all of our records
+        $this->assertCount(5, $results);
+        $results = TestRecord::pmql('cast(data.age as integer) < 35')->get();
+        $this->assertCount(2, $results);
+
+    }
 }

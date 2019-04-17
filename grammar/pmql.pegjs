@@ -50,13 +50,17 @@ logicExpressionRest = go:group_operator _ le:logicExpression {
 
 field =
   v: ( whitespace ( 
-    ( 
-      j: nested_field { return new \ProcessMaker\Query\JsonField($j); } 
+    (
+      "CAST"i lparen field:field _ "AS"i _ type:name rparen { return new \ProcessMaker\Query\Cast($field, $type); }
     )
     /
-    ( 
-      c: column_name { return new \ProcessMaker\Query\ColumnField($c); } 
+    (
+      name:name lparen param:(field) rparen { return new \ProcessMaker\Query\FunctionCall($name, $param); }
     )
+    /
+    nested_field
+    /
+    column_name
   ) ) { return $v[1]; }
 
 /**
@@ -69,7 +73,7 @@ value =
     )
   ) ) { return $v[1]; }
 
-nested_field = dn:(name dot nested_element) { return \ProcessMaker\Query\Processor::flatstr($dn, true); }
+nested_field = dn:(name dot nested_element) { return new \ProcessMaker\Query\JsonField(\ProcessMaker\Query\Processor::flatstr($dn, true)); }
 
 nested_element =  el:((json_array_element / name) (dot nested_element)*) { return \ProcessMaker\Query\Processor::flatstr($el, true); }
 
@@ -141,7 +145,7 @@ name =
   str:[A-Za-z0-9_]+
   { return implode('', $str); }
 
-column_name = name
+column_name = cn:name { return new \ProcessMaker\Query\ColumnField($cn); }
 function_name = name
 
 
