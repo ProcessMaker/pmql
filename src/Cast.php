@@ -1,8 +1,8 @@
 <?php
 namespace ProcessMaker\Query;
 
-use Exception;
 use Illuminate\Support\Facades\DB;
+use ProcessMaker\Query\SyntaxError;
 
 class Cast extends BaseField
 {
@@ -65,7 +65,7 @@ class Cast extends BaseField
         }
 
         $types = implode(', ', $this->getSupportedTypes());
-        throw new Exception("Unsupported cast type. Casts must be of type: {$types}.");
+        throw new SyntaxError("Unsupported cast type. Casts must be of type: {$types}.", $this->getSupportedTypes(), $type, 0, 0, 0);
     }
 
     public function toEloquent($connection = null)
