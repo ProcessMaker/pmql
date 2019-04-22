@@ -1,6 +1,7 @@
 <?php
 namespace ProcessMaker\Query\Tests\Feature;
 
+use Exception;
 use ProcessMaker\Query\Parser;
 use ProcessMaker\Query\SyntaxError;
 use ProcessMaker\Query\Tests\TestCase;
@@ -330,6 +331,13 @@ class GrammarTest extends TestCase
                 ],
             ],
         ], $tree->toArray());
-
+    }
+    
+    public function testQueryWithUnsupportedCastType()
+    {
+        $this->expectException(Exception::class);
+        
+        $parser = new Parser();
+        $tree = $parser->parse('cast(data.age as integer) > 25');
     }
 }
