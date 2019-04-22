@@ -81,12 +81,12 @@ class TraitTest extends TestCase
 
     public function testQueryWithCast()
     {
-        $results = TestRecord::pmql('cast(data.age as integer) > 40')->get();
+        $results = TestRecord::pmql('cast(data.age as number) > 40')->get();
         $this->assertCount(0, $results);
-        $results = TestRecord::pmql('cast(data.age as integer) < 40')->get();
+        $results = TestRecord::pmql('cast(data.age as number) < 40')->get();
         // Should retrieve all of our records
         $this->assertCount(5, $results);
-        $results = TestRecord::pmql('cast(data.age as integer) < 35')->get();
+        $results = TestRecord::pmql('cast(data.age as number) < 35')->get();
         $this->assertCount(2, $results);
 
     }
