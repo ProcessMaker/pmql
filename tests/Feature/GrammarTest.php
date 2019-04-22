@@ -309,7 +309,7 @@ class GrammarTest extends TestCase
     public function testQueryWithCast()
     {
         $parser = new Parser();
-        $tree = $parser->parse('cast(data.age as integer) > 25');
+        $tree = $parser->parse('cast(data.age as number) > 25');
         $this->assertEquals([
             'logical' => 'AND',
             'expressions' => [
