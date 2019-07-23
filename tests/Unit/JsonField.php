@@ -6,7 +6,7 @@ use ProcessMaker\Query\JsonField;
 use ProcessMaker\Query\SyntaxError;
 use ProcessMaker\Query\Tests\TestCase;
 
-class GrammarTest extends TestCase
+class JsonField extends TestCase
 {
     public function testSqliteJson()
     {

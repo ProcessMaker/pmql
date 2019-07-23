@@ -18,7 +18,7 @@
 
 }
 
-start  = fullExpression
+start  = function_args
 
 fullExpression = le:logicExpression ler:logicExpressionRest* { 
   $collection = new \ProcessMaker\Query\ExpressionCollection();
@@ -55,13 +55,21 @@ field =
     )
     /
     (
-      name:name lparen param:(field) rparen { return new \ProcessMaker\Query\FunctionCall($name, $param); }
+      name:name lparen param:(function_args) rparen { return new \ProcessMaker\Query\FunctionCall($name, $param); }
     )
+    /
+    interval_expr
     /
     nested_field
     /
     column_name
   ) ) { return $v[1]; }
+
+function_args = 
+  x: ( (value / field / function_call / logicExpression) ("," _ (value / field / function_call / logicExpression)* ))  { dd($x); }
+
+function_call = 
+  x:
 
 /**
 * Currently what values we support. Right now we only support literals
@@ -135,6 +143,12 @@ binary_operator =
       ) )
   { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
 
+interval_expr =
+ x: ('INTERVAL'i whitespace number whitespace interval_type) { return ['type' => 'interval', 'value' => $x[2], 'interval' => $x[4]]; }
+
+interval_type = 
+  x: (DAY / HOUR / MINUTE / SECOND) { return strtoupper($x); }
+
 digit = [0-9]
 digit1_9 = [1-9]
 decimal_point = dot
@@ -152,6 +166,12 @@ function_name = name
 CURRENT_TIME = 'now'
 CURRENT_DATE = 'now'
 CURRENT_TIMESTAMP = 'now'
+
+/** Date/Type Definitions **/
+DAY = "DAY"i
+HOUR = "HOUR"i
+MINUTE = "MINUTE"i
+SECOND = "SECOND"i
 
 end_of_input = ''
 
