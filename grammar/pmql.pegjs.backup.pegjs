@@ -58,9 +58,13 @@ field =
       name:name lparen param:(function_args) rparen { return new \ProcessMaker\Query\FunctionCall($name, $param); }
     )
     /
+    interval_expr
+    /
     nested_field
     /
     column_name
+    /
+    value
   ) ) { return $v[1]; }
 
 function_args = 
@@ -74,33 +78,15 @@ function_args =
     }
     return $params;
   }
-  /
-  _ {return [];}
-  
-interval_expr =
- x: ('NOW'i whitespace ('-' / '+') number whitespace interval_type) { $value = floatval($x[2] . $x[3]); return new \ProcessMaker\Query\IntervalExpression($value, $x[5]); }
- /
- 'NOW'i {return new \ProcessMaker\Query\IntervalExpression();}
 
-interval_type = 
-  x: (DAY / HOUR / MINUTE / SECOND) { return strtoupper($x); }
-
-
-/** Date/Type Definitions **/
-DAY = "DAY"i
-HOUR = "HOUR"i
-MINUTE = "MINUTE"i
-SECOND = "SECOND"i
-
-
+function_call = 
+  x:(( value / field / interval_expr) (_ "," _ (value / field / interval_expr))*)
 
 /**
 * Currently what values we support. Right now we only support literals
 */
 value =
   v: ( whitespace ( 
-    interval_expr
-    /
     ( 
       x: literal_value { return new \ProcessMaker\Query\LiteralValue($x) ; } 
     )
@@ -168,6 +154,12 @@ binary_operator =
       ) )
   { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
 
+interval_expr =
+ x: ('INTERVAL'i whitespace number whitespace interval_type) { return new \ProcessMaker\Query\IntervalExpression($x[2], $x[4]); }
+
+interval_type = 
+  x: (DAY / HOUR / MINUTE / SECOND) { return strtoupper($x); }
+
 digit = [0-9]
 digit1_9 = [1-9]
 decimal_point = dot
@@ -178,13 +170,20 @@ name =
   str:[A-Za-z0-9_]+
   { return implode('', $str); }
 
-column_name = cn:name { return new \ProcessMaker\Query\ColumnField($cn); }
+column_name = name:[A-Za-z]+ { return new \ProcessMaker\Query\ColumnField(implode('', $name)); }
+
 function_name = name
 
 
 CURRENT_TIME = 'now'
 CURRENT_DATE = 'now'
 CURRENT_TIMESTAMP = 'now'
+
+/** Date/Type Definitions **/
+DAY = "DAY"i
+HOUR = "HOUR"i
+MINUTE = "MINUTE"i
+SECOND = "SECOND"i
 
 end_of_input = ''
 

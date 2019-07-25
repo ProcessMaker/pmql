@@ -6,27 +6,36 @@ use Illuminate\Support\Facades\DB;
 class FunctionCall extends BaseField
 {
     protected $name;
-    protected $param;
+    protected $params;
 
-    public function __construct($name, $param)
+    public function __construct($name, $params)
     {
         $this->name = $name;
-        $this->param = $param;
+        $this->params = $params;
     }
 
     public function toArray()
     {
+        $params = [];
+        foreach($this->params as $param) {
+            $params[] = $param->toArray();
+        }
+
         return [
             'FunctionCall' => [
                 'name' => $this->name,
-                'param' => $this->param->toArray()
+                'params' => $params
             ]
         ];
     }
 
     public function field()
     {
-        return $this->name . "(" . $this->param->toEloquent() . ")";
+        $params = [];
+        foreach($this->params as $param) {
+            $params[] = $param->toEloquent();
+        }
+        return $this->name . "(" . implode(",", $params) . ")";
     }
 
     public function toEloquent()
