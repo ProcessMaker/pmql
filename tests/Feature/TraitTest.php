@@ -90,4 +90,19 @@ class TraitTest extends TestCase
         $this->assertCount(2, $results);
 
     }
+
+    public function testQueryWithInterval()
+    {
+        $results = TestRecord::pmql('updated_at < NOW -2 DAY')->get();
+        $this->assertCount(0, $results);
+        $results = TestRecord::pmql('updated_at < NOW +2 DAY')->get();
+        // Should retrieve all of our records, since they've all been updated before now + 2 day
+        $this->assertCount(5, $results);
+        // Sleep for a second, so we can be sure to be greater than when the records were created
+        sleep(1);
+        $results = TestRecord::pmql('created_at < NOW')->get();
+        // Should retrieve all of our records, since they've all been updated before now
+        $this->assertCount(5, $results);
+
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query\Tests\Feature;
 
 use ProcessMaker\Query\Parser;
@@ -29,6 +30,28 @@ class GrammarTest extends TestCase
                 ],
             ],
         ], $tree->toArray());
+    }
+
+    public function testSimpleCompareExpressionWithInteger()
+    {
+        $parser = new Parser();
+        $tree = $parser->parse('value < 5');
+        $this->assertEquals([
+            'logical' => 'AND',
+            'expressions' => [
+                [
+                    'field' => [
+                        'ColumnField' => 'value',
+                    ],
+                    'operator' => '<',
+                    'value' => [
+                        'LiteralValue' => 5.0,
+                    ],
+                    'logical' => 'AND',
+                ],
+            ],
+        ], $tree->toArray());
+
     }
 
     public function testSimpleExpressionWithNestedField()
@@ -92,13 +115,6 @@ class GrammarTest extends TestCase
                 ],
             ],
         ], $tree->toArray());
-    }
-
-    public function testSyntaxErrorThrownWhenUsingInvalidValue()
-    {
-        $this->expectException(SyntaxError::class);
-        $parser = new Parser();
-        $tree = $parser->parse('value = test');
     }
 
     public function testExpressionInParens()
@@ -291,8 +307,10 @@ class GrammarTest extends TestCase
                     'field' => [
                         'FunctionCall' => [
                             'name' => 'date',
-                            'param' => [
-                                'ColumnField' => 'foo',
+                            'params' => [
+                                [
+                                    'ColumnField' => 'foo',
+                                ]
                             ],
                         ],
                     ],
@@ -331,11 +349,11 @@ class GrammarTest extends TestCase
             ],
         ], $tree->toArray());
     }
-    
+
     public function testQueryWithUnsupportedCastType()
     {
         $this->expectException(SyntaxError::class);
-        
+
         $parser = new Parser();
         $tree = $parser->parse('cast(data.age as integer) > 25');
     }

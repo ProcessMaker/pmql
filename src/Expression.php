@@ -7,7 +7,7 @@ class Expression extends BaseExpression
     protected $operator;
     protected $value;
 
-    public function __construct(BaseField $field, $operator, BaseValue $value, $logical = 'AND')
+    public function __construct(BaseField $field, $operator, $value, $logical = 'AND')
     {
         parent::__construct($logical);
         $this->field = $field;
