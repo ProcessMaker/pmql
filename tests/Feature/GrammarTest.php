@@ -54,6 +54,29 @@ class GrammarTest extends TestCase
 
     }
 
+    public function testSimpleLikeExpression()
+    {
+        $parser = new Parser();
+        $tree = $parser->parse('value LIKE "%test%"');
+        $this->assertEquals([
+            'logical' => 'AND',
+            'expressions' => [
+                [
+                    'field' => [
+                        'ColumnField' => 'value',
+                    ],
+                    'operator' => 'LIKE',
+                    'value' => [
+                        'LiteralValue' => '%test%',
+                    ],
+                    'logical' => 'AND',
+                ],
+            ],
+        ], $tree->toArray());
+
+    }
+
+
     public function testSimpleExpressionWithNestedField()
     {
         $parser = new Parser();

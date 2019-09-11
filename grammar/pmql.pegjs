@@ -164,7 +164,7 @@ binary_operator =
         ( '<=' / '>='
         / '<' / '>'
         / '=' / '==' / '!=' / '<>'
-        / LIKE
+        / "LIKE"i
       ) )
   { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
 
@@ -199,7 +199,6 @@ ESCAPE = whitespace1 "ESCAPE"i
 GLOB = whitespace1 "GLOB"i
 IS = whitespace1 "IS"i
 ISNULL = whitespace1 "ISNULL"i
-LIKE = whitespace1 "LIKE"i
 MATCH = whitespace1 "MATCH"i
 NOT = whitespace1 "NOT"i
 NOTNULL = whitespace1 "NOTNULL"i

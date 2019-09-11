@@ -27,6 +27,16 @@ class TraitTest extends TestCase
         ], $builder->getBindings());
     }
 
+    public function testLikeExpression()
+    {
+        $builder = TestRecord::pmql('foo LIKE "ba%"');
+        $this->assertEquals('select * from "test_records" where ("foo" LIKE ?)', $builder->toSql());
+        $this->assertEquals([
+            'ba%'
+        ], $builder->getBindings());
+    }
+
+
     public function testSimpleGroupedExpression()
     {
         $builder = TestRecord::pmql('foo = "bar" AND cat = "dog"');
@@ -47,6 +57,13 @@ class TraitTest extends TestCase
     {
         $results = TestRecord::pmql('data.first_name = "Invalid"')->get();
         $this->assertCount(0, $results);
+    }
+
+    public function testLikeQueryWithMatch()
+    {
+        $results = TestRecord::pmql('data.first_name LIKE "Ta%"')->get();
+        $this->assertCount(1, $results);
+
     }
 
     public function testMatchWithGrouping()

@@ -12,7 +12,25 @@ class IntervalTest extends TestCase
     {
         $parser = new Parser();
         $tree = $parser->parse('updated_at < NOW');
-        dd($tree);
+        $this->assertEquals([
+            'logical' => 'AND',
+            'expressions' => [
+                [
+                    'field' => [
+                        'ColumnField' => 'updated_at',
+                    ],
+                    'operator' => '<',
+                    'value' => [
+                        'IntervalExpression' => [
+                            'duration' => 0,
+                            'type' => null
+                        ],
+                    ],
+                    'logical' => 'AND',
+                ],
+            ],
+        ], $tree->toArray());
+
     }
 
     /**
