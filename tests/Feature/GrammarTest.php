@@ -32,6 +32,30 @@ class GrammarTest extends TestCase
         ], $tree->toArray());
     }
 
+     /**
+     * Tests a simple expression: 'value != 5'
+     */
+    public function testSimpleNotEqualExpressionWithInteger()
+    { 
+        $parser = new Parser();
+        $tree = $parser->parse('value != 5');
+        $this->assertNotEquals([
+            'logical' => 'AND',
+            'expressions' => [
+                [
+                    'field' => [
+                        'ColumnField' => 'value',
+                    ],
+                    'operator' => '!=',
+                    'value' => [
+                        'LiteralValue' => 6.0,
+                    ],
+                    'logical' => 'AND',
+                ],
+            ],
+        ], $tree->toArray());
+    }
+
     public function testSimpleCompareExpressionWithInteger()
     {
         $parser = new Parser();
