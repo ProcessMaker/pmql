@@ -4,7 +4,7 @@
   "description": "",
   "main": "tools/build.js",
   "dependencies": {
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.2",
     "pegjs": "^0.10.0",
     "phpegjs": "^1.0.0-beta7"
   },
