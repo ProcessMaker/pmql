@@ -122,4 +122,24 @@ class TraitTest extends TestCase
         $this->assertCount(5, $results);
 
     }
+
+    public function testInExpression()
+    {
+        $builder = TestRecord::pmql('foo IN ["abc",123, "def"]');
+        $this->assertEquals('select * from "test_records" where ("foo" in (?, ?, ?))', $builder->toSql());
+        $this->assertEquals(["abc", 123, "def"], $builder->getBindings());
+    }
+    
+    public function testNotInExpression()
+    {
+        $assert = function($pmql, $bindings) {
+            $builder = TestRecord::pmql($pmql);
+            $subs = substr(str_repeat('?, ', count($bindings)), 0, -2);
+            $this->assertEquals('select * from "test_records" where ("foo" not in (' . $subs . '))', $builder->toSql());
+            $this->assertEquals($bindings, $builder->getBindings());
+        };
+        $assert('foo NOT IN ["abc",123, "def"]', ["abc", 123, "def"]);
+        $assert('foo NOT IN ["abc"]', ["abc"]);
+        $assert('foo NOT IN [1]', [1]);
+    }
 }

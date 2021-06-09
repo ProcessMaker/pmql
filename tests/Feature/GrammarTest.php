@@ -404,4 +404,25 @@ class GrammarTest extends TestCase
         $parser = new Parser();
         $tree = $parser->parse('cast(data.age as integer) > 25');
     }
+
+    public function testSimpleInExpression()
+    {
+        $parser = new Parser();
+
+        $assert = function($result) {
+            $value = $result['expressions'][0]['value']['ArrayValue'];
+            $this->assertEquals('abc', $value[2][0][0]);
+            $this->assertEquals(123, $value[2][0][3]);
+        };
+        
+        $tree = $parser->parse('value IN ["abc", 123]');
+        $result = $tree->toArray();
+        $this->assertEquals('IN', $result['expressions'][0]['operator']);
+        $assert($result);
+        
+        $tree = $parser->parse('value NOT IN ["abc", 123]');
+        $result = $tree->toArray();
+        $this->assertEquals('NOT IN', $result['expressions'][0]['operator']);
+        $assert($result);
+    }
 }

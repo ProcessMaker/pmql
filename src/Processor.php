@@ -14,7 +14,7 @@ class Processor
 
     public function process($builder)
     {
-        $method = $this->tree->logical() == BaseExpression::AND ? 'where' : 'orWhere';
+        $method = $this->tree->logicalMethod();
         return $builder->$method($this->processCollection($this->tree));
     }
 
@@ -34,15 +34,31 @@ class Processor
                         if(is_callable($func)) {
                             $builder->$method(($this->callback)($expression));
                         } else {
-                            $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
+                            $this->addToBuilder($builder, $method, $expression);
                         }
                     } else {
-                        $builder->$method($expression->field->toEloquent(), $expression->operator, $expression->value->toEloquent());
+                        $this->addToBuilder($builder, $method, $expression);
                     }
                 }
             }
             return $builder;
         };
+    }
+
+    private function addToBuilder(&$builder, $method, $expression)
+    {
+        if ($expression->value instanceof ArrayValue) {
+            $builder->$method(
+                $expression->field->toEloquent(),
+                $expression->value->toEloquent()
+            );
+        } else {
+            $builder->$method(
+                $expression->field->toEloquent(),
+                $expression->operator,
+                $expression->value->toEloquent()
+            );
+        }
     }
 
     public static function append($arr, $x)

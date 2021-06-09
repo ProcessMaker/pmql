@@ -4,9 +4,12 @@ namespace ProcessMaker\Query;
 abstract class BaseExpression
 {
     protected $logical;
+    protected $operator;
 
     const AND = 'AND';
     const OR = 'OR';
+    const OPERATOR_IN = 'IN';
+    const OPERATOR_NOT_IN = 'NOT IN';
 
     public function __construct($logical)
     {
@@ -25,6 +28,11 @@ abstract class BaseExpression
 
     public function logicalMethod()
     {
-        return $this->logical == BaseExpression::OR ? 'orWhere' : 'where';
+        if ($this->operator === self::OPERATOR_IN) {
+            return 'whereIn';
+        } elseif ($this->operator === self::OPERATOR_NOT_IN) {
+            return 'whereNotIn';
+        }
+        return $this->logical == self::OR ? 'orWhere' : 'where';
     }
 }
