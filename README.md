@@ -4,30 +4,64 @@ ProcessMaker Query Language
 Support for simple SQL-like expressions and converting to Laravel Eloquent.  Exposes a Eloquent scope 'pmql' to pass in clauses.
 
 ## Table of Contents
-- [Simple Usage](#simple-usage)
-- [Operators](#operators)
+- [pmql](#pmql)
+  - [Table of Contents](#table-of-contents)
+  - [Simple Usage](#simple-usage)
+  - [Operators](#operators)
     - [Comparison Operators](#comparison-operators)
     - [Logical Operators](#logical-operators)
-- [Case Sensitivity](#case-sensitivity)
-- [Casting](#casting)
-- [Dates](#dates)
-- [Syntax Examples](#syntax-examples)
+  - [Case Sensitivity](#case-sensitivity)
+  - [Casting](#casting)
+  - [Dates](#dates)
+  - [Syntax Examples](#syntax-examples)
     - [Sample Dataset](#sample-dataset)
     - [Basic Syntax](#basic-syntax)
+      - [Query](#query)
+      - [Result](#result)
     - [And](#and)
+      - [Query](#query-1)
+      - [Result](#result-1)
     - [Or](#or)
+      - [Query](#query-2)
+      - [Result](#result-2)
+    - [IN](#in)
+      - [Query](#query-3)
+      - [Result](#result-3)
+    - [NOT IN](#not-in)
+      - [Query](#query-4)
+      - [Result](#result-4)
     - [Grouping](#grouping)
+      - [Query](#query-5)
+      - [Result](#result-5)
     - [Numeric Comparison](#numeric-comparison)
+      - [Query](#query-6)
+      - [Result](#result-6)
     - [Casting To Number](#casting-to-number)
+      - [Query](#query-7)
+      - [Result](#result-7)
     - [Date Comparison](#date-comparison)
+      - [Query](#query-8)
+      - [Result](#result-8)
     - [Dynamic Date Comparison](#dynamic-date-comparison)
+      - [Query](#query-9)
+      - [Result](#result-9)
     - [Pattern Matching](#pattern-matching)
-        - [Start of String](#start-of-string)
-        - [Exact Pattern](#exact-pattern)
-        - [End of String](#end-of-string)
-        - [String Contains](#string-contains)
-        - [Ignore Case](#ignore-case)
-- [Custom Callbacks](#custom-callbacks)
+      - [Start of String](#start-of-string)
+        - [Query](#query-10)
+        - [Result](#result-10)
+      - [Exact Pattern](#exact-pattern)
+        - [Query](#query-11)
+        - [Result](#result-11)
+      - [End of String](#end-of-string)
+        - [Query](#query-12)
+        - [Result](#result-12)
+      - [String Contains](#string-contains)
+        - [Query](#query-13)
+        - [Result](#result-13)
+      - [Ignore Case](#ignore-case)
+        - [Query](#query-14)
+        - [Result](#result-14)
+  - [Custom Callbacks](#custom-callbacks)
 
 ## Simple Usage
 
@@ -149,6 +183,52 @@ position = "center" or position = "forward"
 | 4  | Carolyn    | Swords    | center   | 1989-07-19 | 7          | false   |
 | 22 | A'ja       | Wilson    | forward  | 1996-08-08 | 1          | true    |
 | 1  | Tamera     | Young     | forward  | 1986-10-30 | 11         | false   |
+
+---
+
+### IN
+
+Similar to multiple OR operators, find players with last names Colson or Young
+
+#### Query
+
+```sql
+last_name IN ["Colson", "Young"]
+```
+
+#### Result
+
+| id | first_name | last_name | position | dob        | experience | starter |
+|----|------------|-----------|----------|------------|------------|---------|
+| 51 | Sydney     | Colson    | guard    | 1989-08-06 | 5          | false   |
+| 1  | Tamera     | Young     | forward  | 1986-10-30 | 11         | false   |
+| 0  | Jackie     | Young     | guard    | 1997-09-16 | 0          | true    |
+
+---
+
+### NOT IN
+
+List all players without the last name Colson or Young
+
+#### Query
+
+```sql
+last_name NOT IN ["Colson", "Young"]
+```
+
+#### Result
+
+| id | first_name | last_name | position | dob        | experience | starter |
+|----|------------|-----------|----------|------------|------------|---------|
+| 8  | Liz        | Cambage   | center   | 1991-08-18 | 3          | true    |
+| 5  | Dearica    | Hamby     | forward  | 1993-11-06 | 4          | false   |
+| 21 | Kayla      | McBride   | guard    | 1992-06-25 | 5          | true    |
+| 19 | JiSu       | Park      | center   | 1998-12-06 | 1          | false   |
+| 10 | Kelsey     | Plum      | guard    | 1994-08-24 | 2          | true    |
+| 11 | Epiphanny  | Prince    | guard    | 1988-01-11 | 9          | false   |
+| 14 | Sugar      | Rodgers   | guard    | 1989-12-08 | 6          | false   |
+| 4  | Carolyn    | Swords    | center   | 1989-07-19 | 7          | false   |
+| 22 | A'ja       | Wilson    | forward  | 1996-08-08 | 1          | true    |
 
 ---
 

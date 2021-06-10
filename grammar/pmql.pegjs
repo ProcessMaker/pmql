@@ -104,6 +104,10 @@ value =
     ( 
       x: literal_value { return new \ProcessMaker\Query\LiteralValue($x) ; } 
     )
+    /
+    ( 
+      x: array_value { return new \ProcessMaker\Query\ArrayValue($x) ; } 
+    )
   ) ) { return $v[1]; }
 
 nested_field = dn:(name dot nested_element) { return new \ProcessMaker\Query\JsonField(\ProcessMaker\Query\Processor::flatstr($dn, true)); }
@@ -114,6 +118,11 @@ json_array_element = ae:(name lbrack digit+ rbrack) { return \ProcessMaker\Query
 
 literal_value =
   ( number / string_literal )
+
+array_value =
+  ( lbrack _ comma_separated_literals+ _ rbrack )
+
+comma_separated_literals = literal_value ',' _ comma_separated_literals / literal_value
 
 /**
 * Number related rules
@@ -164,7 +173,7 @@ binary_operator =
         ( '<=' / '>='
         / '<' / '>'
         / '=' / '==' / '!=' / '<>'
-        / "LIKE"i
+        / 'LIKE' / 'IN' / 'NOT IN'i
       ) )
   { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
 
