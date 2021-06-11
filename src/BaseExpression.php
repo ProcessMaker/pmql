@@ -28,11 +28,6 @@ abstract class BaseExpression
 
     public function logicalMethod()
     {
-        if ($this->operator === self::OPERATOR_IN) {
-            return 'whereIn';
-        } elseif ($this->operator === self::OPERATOR_NOT_IN) {
-            return 'whereNotIn';
-        }
         return $this->logical == self::OR ? 'orWhere' : 'where';
     }
 }

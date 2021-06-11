@@ -411,8 +411,8 @@ class GrammarTest extends TestCase
 
         $assert = function($result) {
             $value = $result['expressions'][0]['value']['ArrayValue'];
-            $this->assertEquals('abc', $value[2][0][0]);
-            $this->assertEquals(123, $value[2][0][3]);
+            $this->assertEquals('abc', $value[0]);
+            $this->assertEquals(123, $value[1]);
         };
         
         $tree = $parser->parse('value IN ["abc", 123]');

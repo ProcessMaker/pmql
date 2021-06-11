@@ -142,4 +142,18 @@ class TraitTest extends TestCase
         $assert('foo NOT IN ["abc"]', ["abc"]);
         $assert('foo NOT IN [1]', [1]);
     }
+
+    public function testInvalidOperatorOnArray()
+    {
+        try {
+            TestRecord::pmql('foo > ["abc",123, "def"]');
+        } catch(SyntaxError $e) {
+            $this->assertStringStartsWith('Expected "-", "0"', $e->getMessage());
+        }
+        try {
+            TestRecord::pmql('foo IN "foo"');
+        } catch(SyntaxError $e) {
+            $this->assertStringStartsWith('Expected "["', $e->getMessage());
+        }
+    }
 }

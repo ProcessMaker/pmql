@@ -3,6 +3,11 @@ namespace ProcessMaker\Query;
 
 class Expression extends BaseExpression
 {
+    const ARRAY_OPERATORS = [
+        'IN',
+        'NOT IN',
+    ];
+
     protected $field;
     protected $operator;
     protected $value;
@@ -34,6 +39,11 @@ class Expression extends BaseExpression
             'value' => $this->value->toArray(),
             'logical' => $this->logical
         ];
+    }
+
+    public function setOperator($operator)
+    {
+        $this->operator = $operator;
     }
 
 }
