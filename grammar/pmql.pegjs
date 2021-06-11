@@ -38,9 +38,9 @@ logicExpression = _ lparen _ fe:fullExpression _ rparen _ {
   return $fe;
 }
 /
-field:field _ op:binary_operator _ value:value _ {
+field:field _ comparison:((binary_operator _ value) / (binary_array_operator _ array_value)) _ {
   // Return a new expression instance
-  return new \ProcessMaker\Query\Expression($field, $op['value'], $value);
+  return new \ProcessMaker\Query\Expression($field, $comparison[0]['value'], $comparison[2]);
 }
 
 logicExpressionRest = go:group_operator _ le:logicExpression {
@@ -104,10 +104,11 @@ value =
     ( 
       x: literal_value { return new \ProcessMaker\Query\LiteralValue($x) ; } 
     )
-    /
-    ( 
-      x: array_value { return new \ProcessMaker\Query\ArrayValue($x) ; } 
-    )
+  ) ) { return $v[1]; }
+
+array_value =
+  v: ( whitespace ( 
+      x: bracketed_values { return new \ProcessMaker\Query\ArrayValue($x); }
   ) ) { return $v[1]; }
 
 nested_field = dn:(name dot nested_element) { return new \ProcessMaker\Query\JsonField(\ProcessMaker\Query\Processor::flatstr($dn, true)); }
@@ -119,8 +120,9 @@ json_array_element = ae:(name lbrack digit+ rbrack) { return \ProcessMaker\Query
 literal_value =
   ( number / string_literal )
 
-array_value =
-  ( lbrack _ comma_separated_literals+ _ rbrack )
+bracketed_values =
+  lbrack _ comma_separated_literals+ _ rbrack
+  
 
 comma_separated_literals = literal_value ',' _ comma_separated_literals / literal_value
 
@@ -173,8 +175,14 @@ binary_operator =
         ( '<=' / '>='
         / '<' / '>'
         / '=' / '==' / '!=' / '<>'
-        / 'LIKE' / 'IN' / 'NOT IN'i
+        / 'LIKE'i
       ) )
+  { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
+
+binary_array_operator =
+  x: ( whitespace
+      ( 'IN'i / 'NOT IN'i )
+  )
   { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
 
 digit = [0-9]

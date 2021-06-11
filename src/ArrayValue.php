@@ -3,7 +3,7 @@ namespace ProcessMaker\Query;
 
 class ArrayValue extends BaseValue
 {
-    public function toEloquent()
+    public function value()
     {
         $list = $this->value[2];
         if (is_array($list[0])) {

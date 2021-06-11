@@ -48,6 +48,7 @@ class Processor
     private function addToBuilder(&$builder, $method, $expression)
     {
         if ($expression->value instanceof ArrayValue) {
+            $method = $expression->operator === Expression::OPERATOR_IN ? 'whereIn' : 'whereNotIn';
             $builder->$method(
                 $expression->field->toEloquent(),
                 $expression->value->toEloquent()
