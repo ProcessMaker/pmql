@@ -107,6 +107,7 @@ class Processor
 
     public static function flatstr($x, $rejectSpace = false, $joinChar = '')
     {
-        return implode($joinChar, self::flatten($x, $rejectSpace, []));
+        $filtered = array_filter(self::flatten($x, $rejectSpace, []));
+        return implode($joinChar, $filtered);
     }
 }
