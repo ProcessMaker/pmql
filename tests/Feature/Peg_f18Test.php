@@ -49,7 +49,7 @@ class Peg_f18Test extends TestCase
             \ProcessMaker\Query\Processor::flatten($arr, true), true
         );
 
-        $this->assertEquals($flatted, "");
+        $this->assertEquals($flatted, $str);
     }
 
      /**
@@ -90,6 +90,6 @@ class Peg_f18Test extends TestCase
             \ProcessMaker\Query\Processor::flatten($arr, true), true
         );
 
-        $this->assertEquals($flatted, "80.0");
+        $this->assertEquals($flatted, $str);
     }
 }
