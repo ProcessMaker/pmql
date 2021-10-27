@@ -36,4 +36,60 @@ class Peg_f18Test extends TestCase
             "integer"
         );
     }
+
+     /**
+     * Tests returning an empty string when an array with an empty value passed
+     */
+    public function testArrayWithEmptyValueShouldReturnAnEmptyString()
+    {
+        $str = "";
+        // Flatstr will receive the value "" as an array with an empty value
+        $arr = str_split($str);
+        $flatted = \ProcessMaker\Query\Processor::flatstr(
+            \ProcessMaker\Query\Processor::flatten($arr, true), true
+        );
+
+        $this->assertEquals($flatted, "");
+    }
+
+     /**
+     * Tests returning an empty string when an empty array passed
+     */
+    public function testEmptyArrayShouldReturnAnEmptyString()
+    {
+        $arr = [];
+        $flatted = \ProcessMaker\Query\Processor::flatstr(
+            \ProcessMaker\Query\Processor::flatten($arr, true), true
+        );
+
+        $this->assertEquals($flatted, "");
+    }
+
+    /**
+     * Tests returning an empty string when an null array passed
+     */
+    public function testNullArrayShouldReturnAnEmptyString()
+    {
+        $arr = null;
+        $flatted = \ProcessMaker\Query\Processor::flatstr(
+            \ProcessMaker\Query\Processor::flatten($arr, true), true
+        );
+
+        $this->assertEquals($flatted, "");
+    }
+
+     /**
+     * Tests returning a flatted string when passing a string with chars values
+     */
+    public function testArrayOfCharsShouldReturnAnStringValue()
+    {
+        $str = "80.0";
+        // Parser will receive the value 80.0 as an array of chars ..
+        $arr = str_split($str);
+        $flatted = \ProcessMaker\Query\Processor::flatstr(
+            \ProcessMaker\Query\Processor::flatten($arr, true), true
+        );
+
+        $this->assertEquals($flatted, "80.0");
+    }
 }
