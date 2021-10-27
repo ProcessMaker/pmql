@@ -4,7 +4,7 @@ namespace ProcessMaker\Query;
 class Processor
 {
     protected $tree;
-    protected $callback; 
+    protected $callback;
 
     public function __construct($tree, $callback = null)
     {
@@ -107,7 +107,9 @@ class Processor
 
     public static function flatstr($x, $rejectSpace = false, $joinChar = '')
     {
-        $filtered = array_filter(self::flatten($x, $rejectSpace, []));
+        $filtered = array_filter(self::flatten($x, $rejectSpace, []), function($item) {
+            return (is_string($item) ? true : false);
+        });
         return implode($joinChar, $filtered);
     }
 }
