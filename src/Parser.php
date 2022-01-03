@@ -386,9 +386,10 @@ class Parser {
       return intval($flatted);
     }
     private function peg_f18($val) {
-      $flatted = \ProcessMaker\Query\Processor::flatstr(
-        \ProcessMaker\Query\Processor::flatten($val, true), true
-      );
+      $flatted = \ProcessMaker\Query\Processor::flatstr($val[1]);
+      if(!is_numeric($flatted)) {
+          return $flatted;
+      }
       if(isFloat($flatted)) return floatval($flatted);
       return intval($flatted);
     }
