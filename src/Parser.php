@@ -63,6 +63,10 @@ if (!class_exists("ProcessMaker\Query\\SyntaxError", false)) {
     }
 }
 
+function isFloat($val) {
+    return strpos($val, ".");
+}
+
 class Parser {
     private $peg_currPos          = 0;
     private $peg_reportedPos      = 0;
@@ -329,7 +333,7 @@ class Parser {
     private $peg_c99;
     private $peg_c100;
 
-    private function peg_f0($le, $ler) { 
+    private function peg_f0($le, $ler) {
       $collection = new \ProcessMaker\Query\ExpressionCollection();
       // Add to our collection
       if($le) {
@@ -374,12 +378,20 @@ class Parser {
     private function peg_f14($dn) { return new \ProcessMaker\Query\JsonField(\ProcessMaker\Query\Processor::flatstr($dn, true)); }
     private function peg_f15($el) { return \ProcessMaker\Query\Processor::flatstr($el, true); }
     private function peg_f16($ae) { return \ProcessMaker\Query\Processor::flatstr($ae); }
-    private function peg_f17($str) { 
-      return floatval(\ProcessMaker\Query\Processor::flatstr(
-          \ProcessMaker\Query\Processor::flatten($str, true), true
-      )); 
+    private function peg_f17($val) {
+      $flatted = \ProcessMaker\Query\Processor::flatstr(
+        \ProcessMaker\Query\Processor::flatten($val, true), true
+      );
+      if(isFloat($flatted)) return floatval($flatted);
+      return intval($flatted);
     }
-    private function peg_f18($str) { return \ProcessMaker\Query\Processor::flatstr($str[1]); }
+    private function peg_f18($val) {
+      $flatted = \ProcessMaker\Query\Processor::flatstr(
+        \ProcessMaker\Query\Processor::flatten($val, true), true
+      );
+      if(isFloat($flatted)) return floatval($flatted);
+      return intval($flatted);
+    }
     private function peg_f19($x) { return $x[1]; }
     private function peg_f20($x) { return ['type' => 'operator', 'value' => strtoupper($x) ]; }
     private function peg_f21($x) { return ['type' => 'operator', 'value' => strtoupper($x[1]) ]; }
