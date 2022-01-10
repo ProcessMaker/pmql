@@ -1,7 +1,7 @@
 /**
-* This ProcessMaker Query Language Grammar is based off of a subset 
-* of SQL. Column names and values are validated by a callback passed in through 
-* the options variable or is passed-thru. A laravel eloquent query object is 
+* This ProcessMaker Query Language Grammar is based off of a subset
+* of SQL. Column names and values are validated by a callback passed in through
+* the options variable or is passed-thru. A laravel eloquent query object is
 * also passed through as the starting point.
 * The query language only provides the where clause of a SQL statement.
 * The ordering and limiting is meant to be handled by the PMQL caller.
@@ -20,7 +20,7 @@
 
 start  = fullExpression
 
-fullExpression = le:logicExpression ler:logicExpressionRest* { 
+fullExpression = le:logicExpression ler:logicExpressionRest* {
   $collection = new \ProcessMaker\Query\ExpressionCollection();
   // Add to our collection
   if($le) {
@@ -49,7 +49,7 @@ logicExpressionRest = go:group_operator _ le:logicExpression {
 }
 
 field =
-  v: ( whitespace ( 
+  v: ( whitespace (
     (
       "CAST"i lparen field:field _ "AS"i _ type:name rparen { return new \ProcessMaker\Query\Cast($field, $type); }
     )
@@ -63,7 +63,7 @@ field =
     column_name
   ) ) { return $v[1]; }
 
-function_args = 
+function_args =
   x:(( value / field / interval_expr) (tail:(_ "," _ (value / field / interval_expr)) {return $tail[3];})*) {
     $params = [];
     if(isset($x[0]) && !empty($x[0])) {
@@ -76,13 +76,13 @@ function_args =
   }
   /
   _ {return [];}
-  
+
 interval_expr =
  x: ('NOW'i whitespace ('-' / '+') number whitespace interval_type) { $value = floatval($x[2] . $x[3]); return new \ProcessMaker\Query\IntervalExpression($value, $x[5]); }
  /
  'NOW'i {return new \ProcessMaker\Query\IntervalExpression();}
 
-interval_type = 
+interval_type =
   x: (DAY / HOUR / MINUTE / SECOND) { return strtoupper($x); }
 
 
@@ -98,11 +98,11 @@ SECOND = "SECOND"i
 * Currently what values we support. Right now we only support literals
 */
 value =
-  v: ( whitespace ( 
+  v: ( whitespace (
     interval_expr
     /
-    ( 
-      x: literal_value { return new \ProcessMaker\Query\LiteralValue($x) ; } 
+    (
+      x: literal_value { return new \ProcessMaker\Query\LiteralValue($x) ; }
     )
   ) ) { return $v[1]; }
 
@@ -119,10 +119,14 @@ literal_value =
 * Number related rules
 * Blatently taken from the number rule at https://github.com/pegjs/pegjs/blob/master/examples/json.pegjs
 */
-number = str:(minus? int frac? exp?) { 
-  return floatval(\ProcessMaker\Query\Processor::flatstr(
-      \ProcessMaker\Query\Processor::flatten($str, true), true
-  )); 
+number = str:(minus? int frac? exp?) {
+  $flatted = \ProcessMaker\Query\Processor::flatstr(
+    \ProcessMaker\Query\Processor::flatten($str, true), true
+  );
+  if(strpos($flatted, ".")) {
+    return floatval($flatted);
+  }
+  return intval($flatted);
 }
 int = zero / (digit1_9 digit *)
 frac = dot digit+
