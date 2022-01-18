@@ -5,7 +5,7 @@ namespace ProcessMaker\Query\Tests\Feature;
 use ProcessMaker\Query\Parser;
 use ProcessMaker\Query\Tests\TestCase;
 
-class Peg_f18Test extends TestCase
+class NumberCastingTest extends TestCase
 {
     /**
      * Tests a returning a float when passing a string float value
