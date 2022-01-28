@@ -63,10 +63,6 @@ if (!class_exists("ProcessMaker\Query\\SyntaxError", false)) {
     }
 }
 
-function isFloat($val) {
-    return strpos($val, ".");
-}
-
 class Parser {
     private $peg_currPos          = 0;
     private $peg_reportedPos      = 0;
@@ -383,11 +379,13 @@ class Parser {
     private function peg_f15($dn) { return new \ProcessMaker\Query\JsonField(\ProcessMaker\Query\Processor::flatstr($dn, true)); }
     private function peg_f16($el) { return \ProcessMaker\Query\Processor::flatstr($el, true); }
     private function peg_f17($ae) { return \ProcessMaker\Query\Processor::flatstr($ae); }
-    private function peg_f18($val) {
+    private function peg_f18($str) {
       $flatted = \ProcessMaker\Query\Processor::flatstr(
-        \ProcessMaker\Query\Processor::flatten($val, true), true
+        \ProcessMaker\Query\Processor::flatten($str, true), true
       );
-      if(isFloat($flatted)) return floatval($flatted);
+      if(strpos($flatted, ".")) {
+        return floatval($flatted);
+      }
       return intval($flatted);
     }
     private function peg_f19($str) { return \ProcessMaker\Query\Processor::flatstr($str[1]); }
