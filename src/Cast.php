@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query;
 
 use Illuminate\Support\Facades\DB;
@@ -9,7 +10,7 @@ class Cast extends BaseField
     protected $field;
 
     protected $type;
-    
+
     protected $types = [
         'number' => [
             'mysql' => 'decimal',
@@ -32,32 +33,33 @@ class Cast extends BaseField
         return [
             'Cast' => [
                 'field' => $this->field->toArray(),
-                'type' => $this->type
-            ]
+                'type' => $this->type,
+            ],
         ];
     }
-    
+
     private function getConnectionDriver()
     {
         $config = DB::connection()->getConfig();
+
         return $config['driver'];
     }
-    
+
     private function getSupportedTypes()
     {
         $list = [];
-        
+
         foreach ($this->types as $key => $value) {
             $list[] = $key;
         }
-        
+
         return $list;
     }
-    
+
     private function mapType($type)
     {
         $driver = $this->getConnectionDriver();
-        
+
         if (array_key_exists($type, $this->types)) {
             if (array_key_exists($driver, $this->types[$type])) {
                 return $this->types[$type][$driver];
@@ -70,7 +72,6 @@ class Cast extends BaseField
 
     public function toEloquent($connection = null)
     {
-        return DB::raw('CAST(' . $this->field->toEloquent($connection) . ' AS ' . $this->type . ')');
+        return DB::raw('CAST('.$this->field->toEloquent($connection).' AS '.$this->type.')');
     }
-
 }

@@ -10,7 +10,6 @@ class TestRecord extends Model
     use PMQL;
 
     protected $casts = [
-        'data' => 'array'
+        'data' => 'array',
     ];
-
 }

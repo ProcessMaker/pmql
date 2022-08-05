@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query;
 
 class Expression extends BaseExpression
@@ -9,7 +10,9 @@ class Expression extends BaseExpression
     ];
 
     protected $field;
+
     protected $operator;
+
     protected $value;
 
     public function __construct(BaseField $field, $operator, $value, $logical = 'AND')
@@ -37,7 +40,7 @@ class Expression extends BaseExpression
             'field' => $this->field->toArray(),
             'operator' => $this->operator,
             'value' => $this->value->toArray(),
-            'logical' => $this->logical
+            'logical' => $this->logical,
         ];
     }
 
@@ -45,5 +48,4 @@ class Expression extends BaseExpression
     {
         $this->operator = $operator;
     }
-
 }

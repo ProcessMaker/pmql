@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query;
 
 class ArrayValue extends BaseValue
@@ -23,13 +24,14 @@ class ArrayValue extends BaseValue
         } else {
             $values[] = $chunk[3];
         }
+
         return $values;
     }
 
     public function toArray()
     {
         return [
-            'ArrayValue' => $this->value()
+            'ArrayValue' => $this->value(),
         ];
     }
 }

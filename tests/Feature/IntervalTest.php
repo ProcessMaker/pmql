@@ -23,14 +23,13 @@ class IntervalTest extends TestCase
                     'value' => [
                         'IntervalExpression' => [
                             'duration' => 0,
-                            'type' => null
+                            'type' => null,
                         ],
                     ],
                     'logical' => 'AND',
                 ],
             ],
         ], $tree->toArray());
-
     }
 
     /**
@@ -51,7 +50,7 @@ class IntervalTest extends TestCase
                     'value' => [
                         'IntervalExpression' => [
                             'duration' => -2.0,
-                            'type' => 'DAY'
+                            'type' => 'DAY',
                         ],
                     ],
                     'logical' => 'AND',
@@ -75,7 +74,7 @@ class IntervalTest extends TestCase
                     'value' => [
                         'IntervalExpression' => [
                             'duration' => 2.0,
-                            'type' => 'HOUR'
+                            'type' => 'HOUR',
                         ],
                     ],
                     'logical' => 'AND',

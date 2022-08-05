@@ -32,11 +32,11 @@ class GrammarTest extends TestCase
         ], $tree->toArray());
     }
 
-     /**
+    /**
      * Tests a simple expression: 'value != 5'
      */
     public function testSimpleNotEqualExpressionWithInteger()
-    { 
+    {
         $parser = new Parser();
         $tree = $parser->parse('value != 5');
         $this->assertNotEquals([
@@ -75,7 +75,6 @@ class GrammarTest extends TestCase
                 ],
             ],
         ], $tree->toArray());
-
     }
 
     public function testSimpleLikeExpression()
@@ -97,9 +96,7 @@ class GrammarTest extends TestCase
                 ],
             ],
         ], $tree->toArray());
-
     }
-
 
     public function testSimpleExpressionWithNestedField()
     {
@@ -357,7 +354,7 @@ class GrammarTest extends TestCase
                             'params' => [
                                 [
                                     'ColumnField' => 'foo',
-                                ]
+                                ],
                             ],
                         ],
                     ],
@@ -382,9 +379,9 @@ class GrammarTest extends TestCase
                     'field' => [
                         'Cast' => [
                             'field' => [
-                                'JsonField' => 'data.age'
+                                'JsonField' => 'data.age',
                             ],
-                            'type' => 'integer'
+                            'type' => 'integer',
                         ],
                     ],
                     'operator' => '>',
@@ -409,17 +406,17 @@ class GrammarTest extends TestCase
     {
         $parser = new Parser();
 
-        $assert = function($result) {
+        $assert = function ($result) {
             $value = $result['expressions'][0]['value']['ArrayValue'];
             $this->assertEquals('abc', $value[0]);
             $this->assertEquals(123, $value[1]);
         };
-        
+
         $tree = $parser->parse('value IN ["abc", 123]');
         $result = $tree->toArray();
         $this->assertEquals('IN', $result['expressions'][0]['operator']);
         $assert($result);
-        
+
         $tree = $parser->parse('value NOT IN ["abc", 123]');
         $result = $tree->toArray();
         $this->assertEquals('NOT IN', $result['expressions'][0]['operator']);

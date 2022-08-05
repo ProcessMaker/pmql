@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query\Tests;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -18,7 +19,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadMigrationsFrom(__DIR__ . '/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/migrations');
         $this->artisan('migrate', ['--database' => 'testing']);
     }
 }

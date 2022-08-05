@@ -13,36 +13,36 @@ class NumberCastingTest extends TestCase
     public function testStringFloatValueShouldReturnAFloatLiteralValue()
     {
         $parser = new Parser();
-        $val = "80.0";
-        $parsed = $parser->parse('value < ' . $val);
+        $val = '80.0';
+        $parsed = $parser->parse('value < '.$val);
 
         $this->assertEquals(
             gettype($parsed->toArray()['expressions'][0]['value']['LiteralValue']),
-            "double"
+            'double'
         );
     }
 
-     /**
+    /**
      * Tests a returning a integer when passing a string integer value
      */
     public function testStringIntValueShouldReturnAIntLiteralValue()
     {
         $parser = new Parser();
-        $val = "80";
-        $parsed = $parser->parse('value < ' . $val);
+        $val = '80';
+        $parsed = $parser->parse('value < '.$val);
 
         $this->assertEquals(
             gettype($parsed->toArray()['expressions'][0]['value']['LiteralValue']),
-            "integer"
+            'integer'
         );
     }
 
-     /**
+    /**
      * Tests returning an empty string when an array with an empty value passed
      */
     public function testArrayWithEmptyValueShouldReturnAnEmptyString()
     {
-        $str = "";
+        $str = '';
         // Flatstr will receive the value "" as an array with an empty value
         $arr = str_split($str);
         $flatted = \ProcessMaker\Query\Processor::flatstr(
@@ -52,7 +52,7 @@ class NumberCastingTest extends TestCase
         $this->assertEquals($flatted, $str);
     }
 
-     /**
+    /**
      * Tests returning an empty string when an empty array passed
      */
     public function testEmptyArrayShouldReturnAnEmptyString()
@@ -62,7 +62,7 @@ class NumberCastingTest extends TestCase
             \ProcessMaker\Query\Processor::flatten($arr, true), true
         );
 
-        $this->assertEquals($flatted, "");
+        $this->assertEquals($flatted, '');
     }
 
     /**
@@ -75,15 +75,15 @@ class NumberCastingTest extends TestCase
             \ProcessMaker\Query\Processor::flatten($arr, true), true
         );
 
-        $this->assertEquals($flatted, "");
+        $this->assertEquals($flatted, '');
     }
 
-     /**
+    /**
      * Tests returning a flatted string when passing a string with chars values
      */
     public function testArrayOfCharsShouldReturnAnStringValue()
     {
-        $str = "80.0";
+        $str = '80.0';
         // Parser will receive the value 80.0 as an array of chars ..
         $arr = str_split($str);
         $flatted = \ProcessMaker\Query\Processor::flatstr(

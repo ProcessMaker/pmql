@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query\Grammars;
 
 use Illuminate\Database\Query\Grammars\MySqlGrammar as BaseMySqlGrammar;
@@ -12,5 +13,4 @@ class MySqlGrammar extends BaseMySqlGrammar
     {
         return parent::wrapJsonSelector($value);
     }
-
 }
