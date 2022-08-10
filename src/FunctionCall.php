@@ -38,7 +38,7 @@ class FunctionCall extends BaseField
             $params[] = $param->toEloquent();
         }
 
-        return $this->name.'('.implode(',', $params).')';
+        return $this->name . '(' . implode(',', $params) . ')';
     }
 
     public function toEloquent()

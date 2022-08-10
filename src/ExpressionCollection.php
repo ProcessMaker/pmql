@@ -25,7 +25,7 @@ class ExpressionCollection extends BaseExpression implements ArrayAccess, Iterat
 
     public function offsetSet($offset, $value)
     {
-        if (! is_a($value, BaseExpression::class)) {
+        if (!is_a($value, BaseExpression::class)) {
             throw new Exception('Cannot set a non expression to an ExpressionCollection');
         }
         if (is_null($offset)) {

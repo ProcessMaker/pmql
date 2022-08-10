@@ -10,14 +10,14 @@ namespace ProcessMaker\Query;
 /* Useful functions: */
 
 /* chr_unicode - get unicode character from its char code */
-if (! function_exists("ProcessMaker\Query\\chr_unicode")) {
+if (!function_exists("ProcessMaker\Query\\chr_unicode")) {
     function chr_unicode($code)
     {
         return html_entity_decode("&#$code;", ENT_QUOTES, 'UTF-8');
     }
 }
 /* ord_unicode - get unicode char code from string */
-if (! function_exists("ProcessMaker\Query\\ord_unicode")) {
+if (!function_exists("ProcessMaker\Query\\ord_unicode")) {
     function ord_unicode($character)
     {
         if (strlen($character) === 1) {
@@ -35,7 +35,7 @@ if (! function_exists("ProcessMaker\Query\\ord_unicode")) {
     }
 }
 /* peg_regex_test - multibyte regex test */
-if (! function_exists("ProcessMaker\Query\\peg_regex_test")) {
+if (!function_exists("ProcessMaker\Query\\peg_regex_test")) {
     function peg_regex_test($pattern, $string)
     {
         if (substr($pattern, -1) == 'i') {
@@ -47,7 +47,7 @@ if (! function_exists("ProcessMaker\Query\\peg_regex_test")) {
 }
 
 /* Syntax error exception */
-if (! class_exists("ProcessMaker\Query\\SyntaxError", false)) {
+if (!class_exists("ProcessMaker\Query\\SyntaxError", false)) {
     class SyntaxError extends \Exception
     {
         public $expected;
@@ -165,7 +165,7 @@ class Parser
         for ($p = $startPos; $p < $endPos; $p++) {
             $ch = $this->input_substr($p, 1);
             if ($ch === "\n") {
-                if (! $details['seenCR']) {
+                if (!$details['seenCR']) {
                     $details['line']++;
                 }
                 $details['column'] = 1;
@@ -246,13 +246,13 @@ class Parser
 
             $expectedDesc = count($expected) > 1
           ? implode(', ', array_slice($expectedDescs, 0, -1))
-              .' or '
-              .$expectedDescs[count($expected) - 1]
+              . ' or '
+              . $expectedDescs[count($expected) - 1]
           : $expectedDescs[0];
 
             $foundDesc = $found ? json_encode($found) : 'end of input';
 
-            $message = 'Expected '.$expectedDesc.' but '.$foundDesc.' found.';
+            $message = 'Expected ' . $expectedDesc . ' but ' . $foundDesc . ' found.';
         }
 
         return new SyntaxError(
@@ -533,10 +533,10 @@ class Parser
     private function peg_f8($x)
     {
         $params = [];
-        if (isset($x[0]) && ! empty($x[0])) {
+        if (isset($x[0]) && !empty($x[0])) {
             $params[] = $x[0];
         }
-        if (isset($x[1]) && ! empty($x[1])) {
+        if (isset($x[1]) && !empty($x[1])) {
             $params = array_merge($params, $x[1]);
         }
 
@@ -550,7 +550,7 @@ class Parser
 
     private function peg_f10($x)
     {
-        $value = floatval($x[2].$x[3]);
+        $value = floatval($x[2] . $x[3]);
 
         return new \ProcessMaker\Query\IntervalExpression($value, $x[5]);
     }
@@ -3068,7 +3068,7 @@ class Parser
         $peg_startRuleFunctions = ['start' => [$this, 'peg_parsestart']];
         $peg_startRuleFunction = [$this, 'peg_parsestart'];
         if (isset($options['startRule'])) {
-            if (! (isset($peg_startRuleFunctions[$options['startRule']]))) {
+            if (!(isset($peg_startRuleFunctions[$options['startRule']]))) {
                 throw new \Exception("Can't start parsing from rule \"" + $options['startRule'] + '".');
             }
 

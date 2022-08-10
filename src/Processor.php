@@ -87,7 +87,7 @@ class Processor
         // We're going to check for various types of $x and handle them differently
         // Null?
         if ($x == null) {
-            if (! $rejectSpace) {
+            if (!$rejectSpace) {
                 // We want to keep the whitespace/null, so append x to acc
                 return self::append($acc, $x);
             }

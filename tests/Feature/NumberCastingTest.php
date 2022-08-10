@@ -14,7 +14,7 @@ class NumberCastingTest extends TestCase
     {
         $parser = new Parser();
         $val = '80.0';
-        $parsed = $parser->parse('value < '.$val);
+        $parsed = $parser->parse('value < ' . $val);
 
         $this->assertEquals(
             gettype($parsed->toArray()['expressions'][0]['value']['LiteralValue']),
@@ -29,7 +29,7 @@ class NumberCastingTest extends TestCase
     {
         $parser = new Parser();
         $val = '80';
-        $parsed = $parser->parse('value < '.$val);
+        $parsed = $parser->parse('value < ' . $val);
 
         $this->assertEquals(
             gettype($parsed->toArray()['expressions'][0]['value']['LiteralValue']),

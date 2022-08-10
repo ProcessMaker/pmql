@@ -18,7 +18,7 @@ class JsonField extends BaseField
 
     public function toEloquent($connection = null)
     {
-        if (! $connection) {
+        if (!$connection) {
             $connection = DB::connection();
         }
         $grammar = $connection->getQueryGrammar();

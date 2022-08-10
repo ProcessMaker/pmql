@@ -43,7 +43,7 @@ class IntervalExpression
         // Intervals need to be converted to carbon, which Eloquent will then convert
         $val = new Carbon();
         if ($this->duration != 0) {
-            $method = 'add'.ucfirst(strtolower($this->type)).'s';
+            $method = 'add' . ucfirst(strtolower($this->type)) . 's';
             $val->$method($this->duration);
         }
 

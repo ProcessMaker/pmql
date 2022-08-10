@@ -72,6 +72,6 @@ class Cast extends BaseField
 
     public function toEloquent($connection = null)
     {
-        return DB::raw('CAST('.$this->field->toEloquent($connection).' AS '.$this->type.')');
+        return DB::raw('CAST(' . $this->field->toEloquent($connection) . ' AS ' . $this->type . ')');
     }
 }
