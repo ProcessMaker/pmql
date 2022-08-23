@@ -1,13 +1,14 @@
 <?php
+
 namespace ProcessMaker\Query;
 
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\DB;
 
 class IntervalExpression
 {
     protected $duration;
+
     protected $type;
 
     public function __construct($duration = 0, $type = null)
@@ -33,7 +34,7 @@ class IntervalExpression
             'IntervalExpression' => [
                 'duration' => $this->duration,
                 'type' => $this->type,
-            ]
+            ],
         ];
     }
 
@@ -41,10 +42,11 @@ class IntervalExpression
     {
         // Intervals need to be converted to carbon, which Eloquent will then convert
         $val = new Carbon();
-        if($this->duration != 0) {
+        if ($this->duration != 0) {
             $method = 'add' . ucfirst(strtolower($this->type)) . 's';
             $val->$method($this->duration);
         }
+
         return $val;
     }
 }

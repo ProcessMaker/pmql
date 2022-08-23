@@ -1,9 +1,11 @@
 <?php
+
 namespace ProcessMaker\Query;
 
 class Processor
 {
     protected $tree;
+
     protected $callback;
 
     public function __construct($tree, $callback = null)
@@ -15,6 +17,7 @@ class Processor
     public function process($builder)
     {
         $method = $this->tree->logicalMethod();
+
         return $builder->$method($this->processCollection($this->tree));
     }
 
@@ -23,15 +26,15 @@ class Processor
 
     private function processCollection($collection)
     {
-        return function($builder) use($collection) {
-            foreach($collection as $expression) {
+        return function ($builder) use ($collection) {
+            foreach ($collection as $expression) {
                 $method = $expression->logicalMethod();
-                if(is_a($expression, ExpressionCollection::class)) {
+                if (is_a($expression, ExpressionCollection::class)) {
                     $builder->$method($this->processCollection($expression));
                 } else {
-                    if($this->callback) {
+                    if ($this->callback) {
                         $func = ($this->callback)($expression);
-                        if(is_callable($func)) {
+                        if (is_callable($func)) {
                             $builder->$method(($this->callback)($expression));
                         } else {
                             $this->addToBuilder($builder, $method, $expression);
@@ -41,6 +44,7 @@ class Processor
                     }
                 }
             }
+
             return $builder;
         };
     }
@@ -65,12 +69,16 @@ class Processor
     public static function append($arr, $x)
     {
         $arr[] = $x;
+
         return $arr;
     }
 
     public static function isAssoc(array $arr)
     {
-        if (array() === $arr) return false;
+        if ([] === $arr) {
+            return false;
+        }
+
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
@@ -83,6 +91,7 @@ class Processor
                 // We want to keep the whitespace/null, so append x to acc
                 return self::append($acc, $x);
             }
+
             return $acc;
         }
         // Associative array?
@@ -102,14 +111,16 @@ class Processor
         for ($i = 0; $i < count($x); $i++) {
             $acc = self::flatten($x[$i], $rejectSpace, $acc);
         }
+
         return $acc;
     }
 
     public static function flatstr($x, $rejectSpace = false, $joinChar = '')
     {
-        $filtered = array_filter(self::flatten($x, $rejectSpace, []), function($item) {
-            return (is_string($item) ? true : false);
+        $filtered = array_filter(self::flatten($x, $rejectSpace, []), function ($item) {
+            return is_string($item) ? true : false;
         });
+
         return implode($joinChar, $filtered);
     }
 }

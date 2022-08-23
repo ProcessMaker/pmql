@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query\Tests;
 
 class TestCase extends \Orchestra\Testbench\TestCase

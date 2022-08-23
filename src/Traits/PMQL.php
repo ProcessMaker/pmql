@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query\Traits;
 
 use ProcessMaker\Query\Parser;
@@ -16,7 +17,7 @@ trait PMQL
         $tree = $parser->parse($query);
 
         $processor = new Processor($tree, $callback);
+
         return $processor->process($builder);
     }
-
 }

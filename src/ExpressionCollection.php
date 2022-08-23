@@ -1,16 +1,16 @@
 <?php
+
 namespace ProcessMaker\Query;
 
-use Iterator;
 use ArrayAccess;
 use Exception;
+use Iterator;
 
 /**
  * Represents a list of expressions
  */
 class ExpressionCollection extends BaseExpression implements ArrayAccess, Iterator
 {
-
     protected $expressions;
 
     // Iterator position
@@ -25,8 +25,8 @@ class ExpressionCollection extends BaseExpression implements ArrayAccess, Iterat
 
     public function offsetSet($offset, $value)
     {
-        if(!is_a($value, BaseExpression::class)) {
-            throw new Exception("Cannot set a non expression to an ExpressionCollection");
+        if (!is_a($value, BaseExpression::class)) {
+            throw new Exception('Cannot set a non expression to an ExpressionCollection');
         }
         if (is_null($offset)) {
             // Append
@@ -46,40 +46,46 @@ class ExpressionCollection extends BaseExpression implements ArrayAccess, Iterat
         unset($this->expressions[$offset]);
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->expressions[$offset]) ? $this->expressions[$offset] : null;
     }
 
     public function toArray()
     {
         $expressions = [];
-        foreach($this->expressions as $expression) {
+        foreach ($this->expressions as $expression) {
             $expressions[] = $expression->toArray();
         }
+
         return [
             'logical' => $this->logical,
-            'expressions' => $expressions
+            'expressions' => $expressions,
         ];
     }
 
-    public function rewind() {
+    public function rewind()
+    {
         $this->_position = 0;
     }
 
-    public function current() {
+    public function current()
+    {
         return $this->expressions[$this->_position];
     }
 
-    public function key() {
+    public function key()
+    {
         return $this->_position;
     }
 
-    public function next() {
-        ++$this->_position;
+    public function next()
+    {
+        $this->_position++;
     }
 
-    public function valid() {
+    public function valid()
+    {
         return isset($this->expressions[$this->_position]);
     }
-
 }

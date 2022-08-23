@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query;
 
 abstract class BaseValue

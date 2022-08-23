@@ -1,4 +1,5 @@
 <?php
+
 namespace ProcessMaker\Query;
 
 abstract class BaseField
@@ -28,8 +29,7 @@ abstract class BaseField
     public function toArray()
     {
         return [
-            'BaseField' => $this->field
+            'BaseField' => $this->field,
         ];
     }
-
 }

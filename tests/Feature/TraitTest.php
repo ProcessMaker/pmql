@@ -1,10 +1,11 @@
 <?php
+
 namespace ProcessMaker\Query\Tests\Feature;
 
-use ProcessMaker\Query\SyntaxError;
-use ProcessMaker\Query\Tests\TestCase;
-use ProcessMaker\Query\Tests\Models\TestRecord;
 use ProcessMaker\Query\ColumnField;
+use ProcessMaker\Query\SyntaxError;
+use ProcessMaker\Query\Tests\Models\TestRecord;
+use ProcessMaker\Query\Tests\TestCase;
 
 class TraitTest extends TestCase
 {
@@ -15,7 +16,7 @@ class TraitTest extends TestCase
     {
         // Note the extra double quote at the end
         $this->expectException(SyntaxError::class);
-        $results = TestRecord::pmql("data.first_name = \"Taylor\"\"")->get();
+        $results = TestRecord::pmql('data.first_name = "Taylor""')->get();
     }
 
     public function testSimpleExpression()
@@ -23,7 +24,7 @@ class TraitTest extends TestCase
         $builder = TestRecord::pmql('foo = "bar"');
         $this->assertEquals('select * from "test_records" where ("foo" = ?)', $builder->toSql());
         $this->assertEquals([
-            'bar'
+            'bar',
         ], $builder->getBindings());
     }
 
@@ -32,10 +33,9 @@ class TraitTest extends TestCase
         $builder = TestRecord::pmql('foo LIKE "ba%"');
         $this->assertEquals('select * from "test_records" where ("foo" LIKE ?)', $builder->toSql());
         $this->assertEquals([
-            'ba%'
+            'ba%',
         ], $builder->getBindings());
     }
-
 
     public function testSimpleGroupedExpression()
     {
@@ -43,7 +43,7 @@ class TraitTest extends TestCase
         $this->assertEquals('select * from "test_records" where ("foo" = ? and "cat" = ?)', $builder->toSql());
         $this->assertEquals([
             'bar',
-            'dog'
+            'dog',
         ], $builder->getBindings());
     }
 
@@ -63,7 +63,6 @@ class TraitTest extends TestCase
     {
         $results = TestRecord::pmql('data.first_name LIKE "Ta%"')->get();
         $this->assertCount(1, $results);
-
     }
 
     public function testMatchWithGrouping()
@@ -105,7 +104,6 @@ class TraitTest extends TestCase
         $this->assertCount(5, $results);
         $results = TestRecord::pmql('cast(data.age as number) < 35')->get();
         $this->assertCount(2, $results);
-
     }
 
     public function testQueryWithInterval()
@@ -120,26 +118,25 @@ class TraitTest extends TestCase
         $results = TestRecord::pmql('created_at < NOW')->get();
         // Should retrieve all of our records, since they've all been updated before now
         $this->assertCount(5, $results);
-
     }
 
     public function testInExpression()
     {
         $builder = TestRecord::pmql('foo IN ["abc",123, "def"]');
         $this->assertEquals('select * from "test_records" where ("foo" in (?, ?, ?))', $builder->toSql());
-        $this->assertEquals(["abc", 123, "def"], $builder->getBindings());
+        $this->assertEquals(['abc', 123, 'def'], $builder->getBindings());
     }
-    
+
     public function testNotInExpression()
     {
-        $assert = function($pmql, $bindings) {
+        $assert = function ($pmql, $bindings) {
             $builder = TestRecord::pmql($pmql);
             $subs = substr(str_repeat('?, ', count($bindings)), 0, -2);
             $this->assertEquals('select * from "test_records" where ("foo" not in (' . $subs . '))', $builder->toSql());
             $this->assertEquals($bindings, $builder->getBindings());
         };
-        $assert('foo NOT IN ["abc",123, "def"]', ["abc", 123, "def"]);
-        $assert('foo NOT IN ["abc"]', ["abc"]);
+        $assert('foo NOT IN ["abc",123, "def"]', ['abc', 123, 'def']);
+        $assert('foo NOT IN ["abc"]', ['abc']);
         $assert('foo NOT IN [1]', [1]);
     }
 
@@ -147,12 +144,12 @@ class TraitTest extends TestCase
     {
         try {
             TestRecord::pmql('foo > ["abc",123, "def"]');
-        } catch(SyntaxError $e) {
+        } catch (SyntaxError $e) {
             $this->assertStringStartsWith('Expected "-", "0"', $e->getMessage());
         }
         try {
             TestRecord::pmql('foo IN "foo"');
-        } catch(SyntaxError $e) {
+        } catch (SyntaxError $e) {
             $this->assertStringStartsWith('Expected "["', $e->getMessage());
         }
     }
