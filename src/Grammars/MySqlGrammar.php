@@ -11,6 +11,8 @@ class MySqlGrammar extends BaseMySqlGrammar
      */
     public function wrapJsonSelector($value)
     {
-        return parent::wrapJsonSelector($value);
+        [$field, $path] = $this->wrapJsonFieldAndPath($value);
+
+        return $field . '->>"$."' . $path;
     }
 }
