@@ -13,7 +13,7 @@ abstract class BaseValue
 
     public function value()
     {
-        return (string) $this->value;
+        return $this->value;
     }
 
     public function setValue($value)
