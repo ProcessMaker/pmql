@@ -26,6 +26,11 @@ abstract class BaseField
         $this->field = $field;
     }
 
+    public function getField()
+    {
+        return $this->field;
+    }
+
     public function toArray()
     {
         return [
