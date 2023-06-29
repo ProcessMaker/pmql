@@ -13,6 +13,6 @@ class MySqlGrammar extends BaseMySqlGrammar
     {
         [$field, $path] = explode('->', $value, 2);
 
-        return $field . '->>"$.' . str_replace('->', '.', $path) . '"';
+        return 'LEFT(' . $field . '->>"$.' . str_replace('->', '.', $path) . '", 255)';
     }
 }
