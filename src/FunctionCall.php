@@ -35,7 +35,13 @@ class FunctionCall extends BaseField
     {
         $params = [];
         foreach ($this->params as $param) {
-            $params[] = $param->toEloquent();
+            $eloquentParam = $param->toEloquent();
+            if (is_object($eloquentParam)) {
+                $grammar = DB::connection()->getQueryGrammar();
+                $eloquentParam = $eloquentParam->getValue($grammar);
+            }
+
+            $params[] = $eloquentParam;
         }
 
         return $this->name . '(' . implode(',', $params) . ')';
