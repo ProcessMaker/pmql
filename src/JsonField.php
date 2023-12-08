@@ -2,10 +2,10 @@
 
 namespace ProcessMaker\Query;
 
-use Exception;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar;
 use Illuminate\Support\Facades\DB;
+use ProcessMaker\Query\Exceptions\UnsupportedQueryGrammarException;
 
 class JsonField extends BaseField
 {
@@ -29,7 +29,7 @@ class JsonField extends BaseField
         } elseif (is_a($grammar, SQLiteGrammar::class)) {
             return $connection->raw((new \ProcessMaker\Query\Grammars\SQLiteGrammar)->wrapJsonSelector($value));
         } else {
-            throw new Exception('Unsupported query grammar for handling JSON fields.');
+            throw new UnsupportedQueryGrammarException();
         }
     }
 }
