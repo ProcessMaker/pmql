@@ -1,6 +1,6 @@
 {
     "name": "processmaker/pmql",
-    "version": "1.12.0",
+    "version": "1.12.1",
     "description": "An Eloquent trait that provides the pmql scope to allow converting simple sql criteria clauses to Eloquent",
     "type": "project",
     "authors": [
