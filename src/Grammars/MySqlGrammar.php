@@ -11,7 +11,17 @@ class MySqlGrammar extends BaseMySqlGrammar
      */
     public function wrapJsonSelector($value)
     {
-        [$field, $path] = explode('->', $value, 2);
+        $parts = explode('->', $value);
+
+        if (count($parts) === 2) {
+            // Caso simple: "data->interest_check"
+            [$field, $path] = $parts;
+        } else {
+            // Case complex: "collection_3->data->interest_check"
+            // Take all except the last element as field
+            $path = array_pop($parts);
+            $field = implode('.', $parts);
+        }
 
         return 'LEFT(' . $field . '->>"$.' . str_replace('->', '.', $path) . '", 255)';
     }
