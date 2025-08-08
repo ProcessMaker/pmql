@@ -14,7 +14,7 @@ class MySqlGrammar extends BaseMySqlGrammar
         $parts = explode('->', $value);
 
         if (count($parts) === 2) {
-            // Caso simple: "data->interest_check"
+            // Case simple: "data->interest_check"
             [$field, $path] = $parts;
         } else {
             // Case complex: "collection_3->data->interest_check"
