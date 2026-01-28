@@ -25,9 +25,9 @@ class JsonField extends BaseField
         // Convert to Laravel Database Json Syntax
         $value = str_replace('.', '->', $this->field);
         if (is_a($grammar, MySqlGrammar::class)) {
-            return $connection->raw((new \ProcessMaker\Query\Grammars\MySqlGrammar)->wrapJsonSelector($value));
+            return $connection->raw((new Grammars\MySqlGrammar($connection))->wrapJsonSelector($value));
         } elseif (is_a($grammar, SQLiteGrammar::class)) {
-            return $connection->raw((new \ProcessMaker\Query\Grammars\SQLiteGrammar)->wrapJsonSelector($value));
+            return $connection->raw((new Grammars\SQLiteGrammar($connection))->wrapJsonSelector($value));
         } else {
             throw new UnsupportedQueryGrammarException();
         }
