@@ -23,12 +23,5 @@
         "laravel": {
             "providers": []
         }
-    },
-    "require": {
-        "laravel/framework": "^11|^12"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^4.8.0",
-        "phpunit/phpunit": "^8.3"
     }
 }
